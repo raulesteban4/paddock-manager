@@ -1,0 +1,29 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:paddock_db}
+    username: ${POSTGRES_USER:paddock_user}
+    password: ${POSTGRES_PASSWORD:paddock_secure_pass_2026}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    # Buena práctica para producción: deshabilitar OSIV para evitar consultas accidentales fuera de la capa Service
+    open-in-view: false
+    # 'none' preserva el esquema DDL y no altera las tablas existentes creadas en la Fase 2
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+logging:
+  level:
+    com.paddock.manager: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE

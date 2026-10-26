@@ -1,0 +1,33 @@
+# ─── Entorno y Secretos ────────────────────────────────────
+.env
+*.env.local
+*.env.production
+
+# ─── IDEs y SO ─────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Docker / Postgres ─────────────────────────────────────
+postgres_data/
+
+# ─── Java / Maven ──────────────────────────────────────────
+backend/target/
+*.class
+*.jar
+!*.jar.original
+
+# ─── Angular / Node ────────────────────────────────────────
+frontend/dist/
+frontend/node_modules/
+frontend/.angular/cache/
+
+# ─── Logs ──────────────────────────────────────────────────
+*.log
+*.log.*
+
+# ─── Scripts de prueba temporales ──────────────────────────
+scripts/
