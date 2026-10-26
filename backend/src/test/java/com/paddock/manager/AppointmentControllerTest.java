@@ -1,6 +1,8 @@
 package com.paddock.manager;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.paddock.manager.modules.repairorder.repository.RepairOrderRepository;
+import com.paddock.manager.modules.repairorder.repository.StatusHistoryRepository;
 import com.paddock.manager.modules.appointment.dto.AppointmentRequestDto;
 import com.paddock.manager.modules.appointment.entity.AppointmentStatus;
 import com.paddock.manager.modules.appointment.repository.AppointmentRepository;
@@ -37,6 +39,8 @@ class AppointmentControllerTest {
 
     @Autowired MockMvc mockMvc;
     @Autowired ObjectMapper objectMapper;
+    @Autowired StatusHistoryRepository statusHistoryRepository;
+    @Autowired RepairOrderRepository repairOrderRepository;
     @Autowired AppointmentRepository appointmentRepository;
     @Autowired CustomerRepository customerRepository;
     @Autowired VehicleRepository vehicleRepository;
@@ -46,6 +50,8 @@ class AppointmentControllerTest {
 
     @BeforeEach
     void setUp() {
+        statusHistoryRepository.deleteAll();
+        repairOrderRepository.deleteAll();
         appointmentRepository.deleteAll();
         vehicleRepository.deleteAll();
         customerRepository.deleteAll();
