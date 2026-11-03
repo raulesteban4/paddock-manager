@@ -6,6 +6,7 @@ import { VehiclesComponent } from './features/vehicles/vehicles.component';
 import { AppointmentsComponent } from './features/appointments/appointments.component';
 import { RepairOrdersComponent } from './features/repair-orders/repair-orders.component';
 import { DiagnosesComponent } from './features/diagnoses/diagnoses.component';
+import { BudgetsComponent } from './features/budgets/budgets.component';
 import { InventoryComponent } from './features/inventory/inventory.component';
 import { authGuard, guestGuard } from './core/guards/auth.guard';
 
@@ -51,6 +52,12 @@ export const routes: Routes = [
     path: 'diagnoses', 
     component: DiagnosesComponent, 
     title: 'Diagnósticos | Paddock Manager',
+    canActivate: [authGuard] 
+  },
+  { 
+    path: 'budgets', 
+    component: BudgetsComponent, 
+    title: 'Presupuestos | Paddock Manager',
     canActivate: [authGuard] 
   },
   { 

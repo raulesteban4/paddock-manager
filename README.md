@@ -97,12 +97,14 @@ flowchart TD
 - Registro estructurado de **síntomas observados**, **diagnóstico técnico**, **recomendaciones** y **observaciones de seguridad**.
 - Restricciones de negocio: Solo editable mientras la orden esté activa y no finalizada.
 
-### 7. Presupuestos y Líneas de Trabajo *(En desarrollo - Fase 12)*
-- Desglose por partidas: Mano de obra (`LABOR`), Repuestos (`PART`), Diagnóstico (`DIAGNOSIS`) y Otros.
-- Cálculo automático de subtotal, IVA (21%) y total general.
-- Aprobación/Rechazo con sincronización automática del estado de la orden de reparación.
+### 7. Presupuestos y Líneas de Trabajo (Budget Module)
+- Desglose por partidas: Mano de obra (`LABOR`), Repuestos (`PART`), Diagnóstico (`DIAGNOSIS`) y Otros (`OTHER`).
+- Cálculo reactivo automático y preciso de **subtotal**, **IVA (21%)** y **total general**.
+- Máquina de estados: `PENDING` ➔ `APPROVED` / `REJECTED`.
+- **Sincronización bidireccional de estados**: Al crear un presupuesto en `DIAGNOSIS`, la orden avanza a `QUOTE_PENDING`. Al ser aprobado por el cliente, avanza automáticamente la orden de reparación a `APPROVED` y queda bloqueada su edición.
+- Vista de impresión profesional / formato factura para entrega o envío al cliente.
 
-### 8. Inventario y Repuestos *(Fase 13)*
+### 8. Inventario y Repuestos *(En desarrollo - Fase 13)*
 - Catálogo de repuestos con código de referencia, fabricante, proveedor y stock disponible.
 - Alertas de stock mínimo para reposición automática.
 
@@ -326,8 +328,8 @@ cd backend
 | **9** | Módulo de Citas (Appointments, control de solapamiento y calendario) | ✅ Completada |
 | **10** | Órdenes de Reparación (Secuencial ORD, máquina de estados y timeline) | ✅ Completada |
 | **11** | Diagnósticos Técnicos (Diagnosis 1:1, hallazgos y recomendaciones) | ✅ Completada |
-| **12** | **Presupuestos y Líneas de Trabajo (Budgets, IVA 21% y aprobación)** | ⏳ *Siguiente* |
-| **13** | Inventario, Repuestos y Alertas de Stock Mínimo | 📋 Planificada |
+| **12** | Presupuestos y Líneas de Trabajo (Budgets, IVA 21% y aprobación) | ✅ Completada |
+| **13** | **Inventario, Repuestos y Alertas de Stock Mínimo** | ⏳ *Siguiente* |
 | **14** | Dashboard de Taller, Métricas y KPIs de Facturación | 📋 Planificada |
 | **15** | Optimización Responsive, Modo Oscuro y Pulido UX | 📋 Planificada |
 | **16** | Cobertura de Pruebas End-to-End y Unitarias | 📋 Planificada |
@@ -346,3 +348,4 @@ Desarrollado por **Raúl Esteban**
 ---
 
 *Proyecto desarrollado con fines académicos y de portfolio profesional Full Stack.*
+

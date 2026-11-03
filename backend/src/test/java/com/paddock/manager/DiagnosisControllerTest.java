@@ -2,6 +2,8 @@ package com.paddock.manager;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paddock.manager.modules.appointment.repository.AppointmentRepository;
+import com.paddock.manager.modules.budget.repository.BudgetItemRepository;
+import com.paddock.manager.modules.budget.repository.BudgetRepository;
 import com.paddock.manager.modules.customer.entity.Customer;
 import com.paddock.manager.modules.customer.repository.CustomerRepository;
 import com.paddock.manager.modules.diagnosis.dto.DiagnosisRequestDto;
@@ -47,6 +49,8 @@ class DiagnosisControllerTest {
 
     @Autowired MockMvc mockMvc;
     @Autowired ObjectMapper objectMapper;
+    @Autowired BudgetItemRepository budgetItemRepository;
+    @Autowired BudgetRepository budgetRepository;
     @Autowired DiagnosisRepository diagnosisRepository;
     @Autowired StatusHistoryRepository statusHistoryRepository;
     @Autowired RepairOrderRepository repairOrderRepository;
@@ -64,6 +68,8 @@ class DiagnosisControllerTest {
     @BeforeEach
     void setUp() {
         // Limpieza en orden inverso de dependencias FK
+        budgetItemRepository.deleteAll();
+        budgetRepository.deleteAll();
         diagnosisRepository.deleteAll();
         statusHistoryRepository.deleteAll();
         repairOrderRepository.deleteAll();

@@ -1,6 +1,8 @@
 package com.paddock.manager;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.paddock.manager.modules.budget.repository.BudgetItemRepository;
+import com.paddock.manager.modules.budget.repository.BudgetRepository;
 import com.paddock.manager.modules.diagnosis.repository.DiagnosisRepository;
 import com.paddock.manager.modules.repairorder.repository.RepairOrderRepository;
 import com.paddock.manager.modules.repairorder.repository.StatusHistoryRepository;
@@ -41,6 +43,12 @@ class CustomerControllerTest {
     private AppointmentRepository appointmentRepository;
 
     @Autowired
+    private BudgetItemRepository budgetItemRepository;
+
+    @Autowired
+    private BudgetRepository budgetRepository;
+
+    @Autowired
     private DiagnosisRepository diagnosisRepository;
 
     @Autowired
@@ -54,7 +62,9 @@ class CustomerControllerTest {
 
     @BeforeEach
     void setUp() {
-        // Borrar en orden inverso a las FK: diagnósticos → historial → órdenes → citas → vehículos → clientes
+        // Borrar en orden inverso a las FK: presupuestos → diagnósticos → historial → órdenes → citas → vehículos → clientes
+        budgetItemRepository.deleteAll();
+        budgetRepository.deleteAll();
         diagnosisRepository.deleteAll();
         statusHistoryRepository.deleteAll();
         repairOrderRepository.deleteAll();

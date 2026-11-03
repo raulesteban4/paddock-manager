@@ -254,6 +254,7 @@ export class SidebarComponent {
     { label: 'Citas', route: '/appointments', icon: '📅' },
     { label: 'Órdenes de Trabajo', route: '/repair-orders', icon: '🔧', badge: '3' },
     { label: 'Diagnósticos', route: '/diagnoses', icon: '🔍' },
+    { label: 'Presupuestos', route: '/budgets', icon: '💶' },
     { label: 'Inventario & Piezas', route: '/inventory', icon: '📦' }
   ];
 

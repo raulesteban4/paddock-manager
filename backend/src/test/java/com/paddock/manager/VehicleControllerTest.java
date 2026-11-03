@@ -1,6 +1,8 @@
 package com.paddock.manager;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.paddock.manager.modules.budget.repository.BudgetItemRepository;
+import com.paddock.manager.modules.budget.repository.BudgetRepository;
 import com.paddock.manager.modules.diagnosis.repository.DiagnosisRepository;
 import com.paddock.manager.modules.repairorder.repository.RepairOrderRepository;
 import com.paddock.manager.modules.repairorder.repository.StatusHistoryRepository;
@@ -37,6 +39,12 @@ class VehicleControllerTest {
     private ObjectMapper objectMapper;
 
     @Autowired
+    private BudgetItemRepository budgetItemRepository;
+
+    @Autowired
+    private BudgetRepository budgetRepository;
+
+    @Autowired
     private DiagnosisRepository diagnosisRepository;
 
     @Autowired
@@ -58,6 +66,8 @@ class VehicleControllerTest {
 
     @BeforeEach
     void setUp() {
+        budgetItemRepository.deleteAll();
+        budgetRepository.deleteAll();
         diagnosisRepository.deleteAll();
         statusHistoryRepository.deleteAll();
         repairOrderRepository.deleteAll();
