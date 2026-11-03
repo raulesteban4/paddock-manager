@@ -24,11 +24,11 @@ public interface RepairOrderRepository extends JpaRepository<RepairOrder, Long> 
               AND (:customerId IS NULL OR r.customer.id = :customerId)
               AND (:vehicleId IS NULL OR r.vehicle.id = :vehicleId)
               AND (:mechanicId IS NULL OR (r.mechanic IS NOT NULL AND r.mechanic.id = :mechanicId))
-              AND (:search IS NULL OR (
-                    LOWER(r.orderNumber) LIKE LOWER(CONCAT('%', :search, '%')) OR
-                    LOWER(r.vehicle.licensePlate) LIKE LOWER(CONCAT('%', :search, '%')) OR
-                    LOWER(r.customer.firstName) LIKE LOWER(CONCAT('%', :search, '%')) OR
-                    LOWER(r.customer.lastName) LIKE LOWER(CONCAT('%', :search, '%'))
+              AND (:pattern IS NULL OR (
+                    LOWER(r.orderNumber) LIKE :pattern OR
+                    LOWER(r.vehicle.licensePlate) LIKE :pattern OR
+                    LOWER(r.customer.firstName) LIKE :pattern OR
+                    LOWER(r.customer.lastName) LIKE :pattern
               ))
             """)
     Page<RepairOrder> findAllWithFilters(
@@ -37,7 +37,7 @@ public interface RepairOrderRepository extends JpaRepository<RepairOrder, Long> 
             @Param("customerId") Long customerId,
             @Param("vehicleId") Long vehicleId,
             @Param("mechanicId") Long mechanicId,
-            @Param("search") String search,
+            @Param("pattern") String pattern,
             Pageable pageable
     );
 

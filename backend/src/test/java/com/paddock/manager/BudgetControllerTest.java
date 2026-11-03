@@ -318,5 +318,36 @@ class BudgetControllerTest {
                 .andExpect(jsonPath("$.data.orderNumber").value(order.getOrderNumber()))
                 .andExpect(jsonPath("$.data.total").value(187.55));
     }
+
+    @Test
+    void shouldFindBudgetsWithFilters() throws Exception {
+        Long orderId = createOrderInDiagnosisState();
+        BudgetRequestDto request = buildSampleBudgetRequest(orderId);
+
+        mockMvc.perform(post("/api/budgets")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isCreated());
+
+        // Test list without filters
+        mockMvc.perform(get("/api/budgets"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.content", hasSize(1)))
+                .andExpect(jsonPath("$.data.content[0].status").value("PENDING"));
+
+        // Test list with status filter
+        mockMvc.perform(get("/api/budgets").param("status", "PENDING"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.content", hasSize(1)));
+
+        mockMvc.perform(get("/api/budgets").param("status", "APPROVED"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.content", hasSize(0)));
+
+        // Test list with search
+        mockMvc.perform(get("/api/budgets").param("search", "Hamilton"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.content", hasSize(1)));
+    }
 }
 

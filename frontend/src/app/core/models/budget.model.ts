@@ -68,3 +68,4 @@ export const BUDGET_ITEM_TYPE_LABELS: Record<BudgetItemType, { label: string; ic
   DIAGNOSIS: { label: 'Diagnóstico', icon: '🔬' },
   OTHER: { label: 'Otros Conceptos', icon: '📦' }
 };
+

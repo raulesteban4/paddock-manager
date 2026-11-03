@@ -133,9 +133,21 @@ public class BudgetServiceImpl implements BudgetService {
 
     @Override
     public Page<BudgetResponseDto> findAll(BudgetStatus status, String search, Pageable pageable) {
-        String cleanSearch = (search != null && !search.trim().isEmpty()) ? search.trim() : null;
-        return budgetRepository.findAllWithFilters(status, cleanSearch, pageable)
-                .map(budgetMapper::toResponseDto);
+        boolean hasSearch = (search != null && !search.trim().isEmpty());
+        String pattern = hasSearch ? "%" + search.trim().toLowerCase() + "%" : null;
+
+        Page<Budget> page;
+        if (hasSearch && status != null) {
+            page = budgetRepository.searchBudgetsWithStatus(status, pattern, pageable);
+        } else if (hasSearch) {
+            page = budgetRepository.searchBudgets(pattern, pageable);
+        } else if (status != null) {
+            page = budgetRepository.findByStatus(status, pageable);
+        } else {
+            page = budgetRepository.findAll(pageable);
+        }
+
+        return page.map(budgetMapper::toResponseDto);
     }
 
     @Override
@@ -190,7 +202,7 @@ public class BudgetServiceImpl implements BudgetService {
     // ── Métodos auxiliares de cálculo y validación ──────────────────────────────
 
     private Budget findBudgetOrThrow(Long id) {
-        return budgetRepository.findById(id)
+        return budgetRepository.findByIdWithDetails(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Presupuesto", "id", id));
     }
 

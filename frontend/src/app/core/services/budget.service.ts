@@ -58,3 +58,4 @@ export class BudgetService {
     return this.http.delete<ApiResponse<void>>(`${this.baseUrl}/${id}`);
   }
 }
+

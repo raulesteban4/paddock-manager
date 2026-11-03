@@ -52,8 +52,12 @@ public class RepairOrderServiceImpl implements RepairOrderService {
             String search,
             Pageable pageable) {
 
+        String pattern = (search != null && !search.trim().isEmpty())
+                ? "%" + search.trim().toLowerCase() + "%"
+                : null;
+
         return repairOrderRepository.findAllWithFilters(
-                status, priority, customerId, vehicleId, mechanicId, search, pageable
+                status, priority, customerId, vehicleId, mechanicId, pattern, pageable
         ).map(order -> {
             List<StatusHistory> history = statusHistoryRepository.findByRepairOrderIdOrderByChangedAtAsc(order.getId());
             return mapper.toResponseDto(order, history);
