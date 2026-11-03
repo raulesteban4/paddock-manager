@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paddock.manager.modules.appointment.repository.AppointmentRepository;
 import com.paddock.manager.modules.customer.entity.Customer;
 import com.paddock.manager.modules.customer.repository.CustomerRepository;
+import com.paddock.manager.modules.diagnosis.repository.DiagnosisRepository;
 import com.paddock.manager.modules.repairorder.dto.RepairOrderRequestDto;
 import com.paddock.manager.modules.repairorder.dto.StatusChangeRequestDto;
 import com.paddock.manager.modules.repairorder.entity.RepairOrderPriority;
@@ -40,6 +41,7 @@ class RepairOrderControllerTest {
 
     @Autowired MockMvc mockMvc;
     @Autowired ObjectMapper objectMapper;
+    @Autowired DiagnosisRepository diagnosisRepository;
     @Autowired RepairOrderRepository repairOrderRepository;
     @Autowired StatusHistoryRepository statusHistoryRepository;
     @Autowired AppointmentRepository appointmentRepository;
@@ -55,6 +57,7 @@ class RepairOrderControllerTest {
 
     @BeforeEach
     void setUp() {
+        diagnosisRepository.deleteAll();
         statusHistoryRepository.deleteAll();
         repairOrderRepository.deleteAll();
         appointmentRepository.deleteAll();

@@ -5,6 +5,7 @@ import { CustomersComponent } from './features/customers/customers.component';
 import { VehiclesComponent } from './features/vehicles/vehicles.component';
 import { AppointmentsComponent } from './features/appointments/appointments.component';
 import { RepairOrdersComponent } from './features/repair-orders/repair-orders.component';
+import { DiagnosesComponent } from './features/diagnoses/diagnoses.component';
 import { InventoryComponent } from './features/inventory/inventory.component';
 import { authGuard, guestGuard } from './core/guards/auth.guard';
 
@@ -44,6 +45,12 @@ export const routes: Routes = [
     path: 'repair-orders', 
     component: RepairOrdersComponent, 
     title: 'Órdenes de Trabajo | Paddock Manager',
+    canActivate: [authGuard] 
+  },
+  { 
+    path: 'diagnoses', 
+    component: DiagnosesComponent, 
+    title: 'Diagnósticos | Paddock Manager',
     canActivate: [authGuard] 
   },
   { 
