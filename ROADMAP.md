@@ -2,8 +2,8 @@
 
 > **Proyecto:** Paddock Manager  
 > **Última actualización:** 11 de Noviembre de 2026  
-> **Estado global de avance:** 13 de 19 fases completadas y verificadas (68.4% de avance del roadmap global).  
-> **Suite de pruebas backend:** **57 de 57 pruebas superadas al 100% (`BUILD SUCCESS`)**.  
+> **Estado global de avance:** 14 de 19 fases completadas y verificadas (73.7% de avance del roadmap global).  
+> **Suite de pruebas backend:** **60 de 60 pruebas superadas al 100% (`BUILD SUCCESS`)**.  
 > **Compilación frontend:** **Angular 18 Standalone sin errores (`ng build`)**.
 
 ---
@@ -25,7 +25,7 @@
 | **11** | Diagnosis (Diagnósticos Técnicos 1:1) | **COMPLETADA** | ✅ | ✅ | ✅ Integration Tests |
 | **12** | Budgets (Presupuestos, IVA e Impresión) | **COMPLETADA** | ✅ | ✅ | ✅ Integration Tests |
 | **13** | Inventory (Inventario, Repuestos & Stock) | **COMPLETADA** | ✅ | ✅ | ✅ Integration Tests |
-| **14** | Dashboards (Métricas y KPIs del Taller) | **PENDIENTE / PROVISIONAL** | ❌ Sin endpoint | ⚠️ Mock estático | ❌ Pendiente |
+| **14** | Dashboards (Métricas y KPIs del Taller) | **COMPLETADA** | ✅ /api/dashboard | ✅ Conectado | ✅ Integration Tests |
 | **15** | Responsive + UX (Modo Oscuro y Móvil) | **PARCIAL** | N/A | ⚠️ Adaptable básico | ⚠️ Visual |
 | **16** | Testing (Cobertura Global Backend/Frontend) | **PARCIAL** | ✅ 57 tests green | ❌ Sin tests Karma | ⚠️ 57/57 Backend |
 | **17** | Docker (Contenedorización Full Stack) | **PARCIAL** | ❌ Sin Dockerfile | ❌ Sin Dockerfile | ⚠️ Solo PostgreSQL |
@@ -226,16 +226,17 @@
 - **Objetivo:** Proporcionar al jefe de taller y administrador un panel de control con métricas en tiempo real de vehículos, órdenes activas, citas del día, stock crítico y facturación.
 - **Funcionalidades necesarias:**
   - Backend: Controlador y servicio de estadísticas agregadas (`DashboardStatsDto`):
-    - Conteo de vehículos en taller y estado de ocupación.
-    - Órdenes desglosadas por estado y urgencia.
-    - Citas programadas para el día de hoy.
-    - Facturación acumulada del mes (presupuestos aprobados).
-    - Top piezas con mayor rotación o alerta de reposición.
-  - Frontend: Reemplazar el maquetado estático provisional de `dashboard.component.ts` por un panel dinámico conectado a la API.
-- **Entregables:** `modules/dashboard/` (backend), `dashboard.service.ts` y actualización de `dashboard.component.ts`.
-- **Criterios de aceptación:** Las cifras y tablas del panel deben reflejar fielmente los datos reales de la base de datos sin valores harcodeados.
-- **Verificación:** Tests de integración de dashboard y verificación visual con datos del seed.
-- **Estado actual:** **PENDIENTE / PROVISIONAL** (Actualmente el componente `dashboard.component.ts` contiene datos estáticos de maqueta creados en la Fase 6).
+    - Conteo de vehículos en taller (`vehiclesInWorkshop`) excluyendo estados finalizados.
+    - Órdenes desglosadas por estado operativo (`IN_REPAIR`, `DIAGNOSIS`, `QUOTE_PENDING`, `WAITING_FOR_PARTS`, `APPROVED`, etc.).
+    - Citas programadas para la jornada de hoy (`todayAppointments`).
+    - Recambios con existencias bajo el umbral mínimo (`lowStockParts`).
+    - Facturación total acumulada de presupuestos aprobados (`totalApprovedRevenue`).
+    - Listado en vivo de las órdenes de trabajo activas más recientes (`recentOrders`).
+  - Frontend: `DashboardService` y `DashboardComponent` 100% reactivos con Signals enlazados a la API.
+- **Entregables:** Módulo backend `modules/dashboard/`, tests `DashboardControllerTest.java`, modelo `dashboard.model.ts`, servicio `dashboard.service.ts` y componente `features/dashboard/dashboard.component.ts`.
+- **Criterios de aceptación:** El panel refleja en tiempo real las cifras reales de la base de datos sin datos hardcodeados y actualiza automáticamente los contadores.
+- **Verificación:** `DashboardControllerTest.java` (3 pruebas pasando con éxito), compilación `ng build` sin errores.
+- **Estado actual:** **COMPLETADA**.
 
 ---
 
@@ -308,8 +309,8 @@
 
 ## 🚀 3. Próximo Paso Inmediato
 
-El siguiente hito obligatorio en el desarrollo de Paddock Manager es la **FASE 14: Dashboards y Estadísticas**, que comprende:
-1. Diseñar el endpoint `GET /api/dashboard/stats` en el backend para suministrar indicadores agregados en tiempo real (vehículos en taller, órdenes activas, citas del día, alertas de stock bajo e importe facturado).
-2. Crear `DashboardService` en Angular para consumir dicho endpoint.
-3. Reemplazar los datos estáticos de `dashboard.component.ts` por señales reactivas enlazadas al servicio.
-4. Crear la suite de pruebas `DashboardControllerTest.java` y verificar 0 regresiones.
+El siguiente hito obligatorio en el desarrollo de Paddock Manager es la **FASE 15: Responsive + UX (Modo Oscuro y Móvil)**, que comprende:
+1. Optimizar el menú lateral (`SidebarComponent`) con soporte para drawer colapsable en dispositivos móviles (`< 768px`).
+2. Implementar selector de tema (Modo Oscuro / Modo Claro) persistente mediante CSS custom properties y `localStorage`.
+3. Mejorar la visualización responsiva de tablas de datos complejas en pantallas reducidas.
+4. Pulir la accesibilidad de contrastes de color según los estándares WCAG AA.

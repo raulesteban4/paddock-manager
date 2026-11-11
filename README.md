@@ -111,6 +111,13 @@ flowchart TD
 - **Alertas de reposición inmediata**: Detección y filtrado de piezas con existencias en o por debajo del umbral de stock mínimo (`lowStock = true`).
 - Métricas y valoración financiera del almacén: total de referencias activas, piezas críticas y valoración monetaria total a precio de coste y a precio de venta minorista.
 
+### 9. Panel de Control y Estadísticas en Tiempo Real (Dashboard Module)
+- Centralización de indicadores clave (KPIs) del taller en tiempo real.
+- Conteo de vehículos en instalaciones, órdenes activas desglosadas por estado operativo, citas agendadas para el día y piezas críticas en almacén.
+- **Seguimiento financiero**: Visualización consolidada de facturación aprobada acumulada.
+- **Tabla operativa viva**: Listado de las órdenes activas más recientes con acceso directo a su gestión.
+- Desglose y mapa operativo de estados de trabajo para el jefe de taller y recepción.
+
 ---
 
 ## 🏛️ Arquitectura del Sistema
@@ -133,7 +140,8 @@ paddock-manager/
 │           ├── repairorder/       # Órdenes de trabajo, historial y transiciones
 │           ├── diagnosis/         # Diagnósticos técnicos y recomendaciones
 │           ├── budget/            # Presupuestos, cálculo de IVA y partidas
-│           └── part/              # Inventario, piezas, ajustes y valoración de stock
+│           ├── part/              # Inventario, piezas, ajustes y valoración de stock
+│           └── dashboard/         # Métricas consolidadas y KPIs de taller en tiempo real
 │
 ├── frontend/                      # Angular 18 Standalone App
 │   └── src/app/
@@ -314,7 +322,7 @@ cd backend
 .\mvnw.cmd test
 ```
 
-> **Resultado actual:** **57 de 57 pruebas pasando con éxito (`BUILD SUCCESS`)** (Appointment, Customer, Vehicle, RepairOrder, Diagnosis, Budget y Part integration tests).
+> **Resultado actual:** **60 de 60 pruebas pasando con éxito (`BUILD SUCCESS`)** (Appointment, Customer, Vehicle, RepairOrder, Diagnosis, Budget, Part y Dashboard integration tests).
 
 ---
 
@@ -335,8 +343,8 @@ cd backend
 | **11** | Diagnósticos Técnicos (Diagnosis 1:1, hallazgos y recomendaciones) | ✅ Completada |
 | **12** | Presupuestos y Líneas de Trabajo (Budgets, IVA 21% y aprobación) | ✅ Completada |
 | **13** | **Inventario, Repuestos y Alertas de Stock Mínimo** | ✅ Completada |
-| **14** | **Dashboard de Taller, Métricas y KPIs de Facturación** | ⏳ *Siguiente* |
-| **15** | Optimización Responsive, Modo Oscuro y Pulido UX | 📋 Planificada |
+| **14** | **Dashboard de Taller, Métricas y KPIs de Facturación** | ✅ Completada |
+| **15** | **Optimización Responsive, Modo Oscuro y Pulido UX** | ⏳ *Siguiente* |
 | **16** | Cobertura de Pruebas End-to-End y Unitarias | 📋 Planificada |
 | **17** | Contenedorización Multi-Stage (Docker Compose Full Stack) | 📋 Planificada |
 | **18** | Despliegue en la Nube y Configuración de Producción | 📋 Planificada |

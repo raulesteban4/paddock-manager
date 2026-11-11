@@ -52,4 +52,7 @@ public interface BudgetRepository extends JpaRepository<Budget, Long> {
     Page<Budget> searchBudgetsWithStatus(@Param("status") BudgetStatus status,
                                          @Param("pattern") String pattern,
                                          Pageable pageable);
+
+    @Query("SELECT COALESCE(SUM(b.total), 0) FROM Budget b WHERE b.status = :status")
+    java.math.BigDecimal sumTotalByStatus(@Param("status") BudgetStatus status);
 }

@@ -91,6 +91,7 @@ com.paddock.manager/
     ├── auth/                         # Autenticación, login y /me
     ├── budget/                       # Presupuestos, partidas y cálculo de IVA
     ├── customer/                     # Clientes particulares y empresas
+    ├── dashboard/                    # Métricas, KPIs consolidados y órdenes recientes
     ├── diagnosis/                    # Diagnósticos de averías e inspecciones
     ├── health/                       # Verificación de salud del servicio (/api/health)
     ├── part/                         # Inventario, piezas, ajustes y valoración de stock
@@ -147,6 +148,7 @@ frontend/src/app/
 │   │   ├── auth.model.ts
 │   │   ├── budget.model.ts
 │   │   ├── customer.model.ts
+│   │   ├── dashboard.model.ts        # DashboardStats
 │   │   ├── diagnosis.model.ts
 │   │   ├── part.model.ts
 │   │   ├── repair-order.model.ts
@@ -156,6 +158,7 @@ frontend/src/app/
 │       ├── auth.service.ts           # Gestión de sesión con Signals (currentUser, role)
 │       ├── budget.service.ts
 │       ├── customer.service.ts
+│       ├── dashboard.service.ts      # Cliente HTTP para métricas y KPIs
 │       ├── diagnosis.service.ts
 │       ├── part.service.ts
 │       ├── repair-order.service.ts
@@ -365,6 +368,7 @@ erDiagram
 | :--- | :--- | :---: | :--- |
 | **Autenticación** | `/api/auth/login` | `POST` | *Público (PermitAll)* |
 | **Autenticación** | `/api/auth/me` | `GET` | Autenticado (Cualquier rol) |
+| **Dashboard** | `/api/dashboard/stats` | `GET` | `ADMIN`, `RECEPTIONIST`, `MECHANIC` |
 | **Salud** | `/api/health` | `GET` | *Público (PermitAll)* |
 | **Documentación** | `/swagger-ui/**`, `/v3/api-docs/**` | `GET` | *Público (PermitAll)* |
 | **Clientes** | `/api/customers` | `GET` | `ADMIN`, `RECEPTIONIST`, `MECHANIC` |
@@ -437,17 +441,18 @@ services:
 
 El proyecto cuenta con una sólida batería de pruebas de integración con `@SpringBootTest` y `MockMvc` utilizando una base de datos en memoria H2 con dialecto PostgreSQL (`MODE=PostgreSQL`).
 
-### 9.1 Clases de Test Existentes (57 pruebas verdes):
+### 9.1 Clases de Test Existentes (60 pruebas verdes):
 1. `AppointmentControllerTest` (6 tests): creación, validación de conflicto de horarios, cambios de estado y cancelación.
 2. `AuthControllerTest` (6 tests): login exitoso, credenciales inválidas, usuario deshabilitado y consulta `/me`.
 3. `BudgetControllerTest` (6 tests): emisión de presupuesto, desglose de partidas, cálculo de IVA, aprobación y rechazo.
 4. `CustomerControllerTest` (7 tests): alta, duplicidad de DNI, duplicidad de email, búsqueda paginada y borrado.
-5. `DiagnosisControllerTest` (6 tests): registro de diagnosis 1:1, validación de pertenencia a orden y actualización.
-6. `HealthControllerTest` (1 test): disponibilidad del endpoint `/api/health`.
-7. `PaddockManagerApplicationTests` (1 test): verificación de carga correcta del contexto de Spring.
-8. `PartControllerTest` (8 tests): alta de repuesto, referencia duplicada, ajustes de stock positivos/negativos, rechazo de stock negativo, filtro de stock bajo y estadísticas.
-9. `RepairOrderControllerTest` (8 tests): generación de código anual `ORD-YYYY-XXXX`, transiciones de la máquina de estados y asignación de mecánico.
-10. `VehicleControllerTest` (9 tests): validación de bastidor VIN de 17 caracteres, matrícula única y filtrado por cliente.
+5. `DashboardControllerTest` (3 tests): métricas en base de datos vacía, cómputo con datos activos (órdenes, vehículos, citas, piezas, facturación) y restricción no autenticada.
+6. `DiagnosisControllerTest` (6 tests): registro de diagnosis 1:1, validación de pertenencia a orden y actualización.
+7. `HealthControllerTest` (1 test): disponibilidad del endpoint `/api/health`.
+8. `PaddockManagerApplicationTests` (1 test): verificación de carga correcta del contexto de Spring.
+9. `PartControllerTest` (8 tests): alta de repuesto, referencia duplicada, ajustes de stock positivos/negativos, rechazo de stock negativo, filtro de stock bajo y estadísticas.
+10. `RepairOrderControllerTest` (8 tests): generación de código anual `ORD-YYYY-XXXX`, transiciones de la máquina de estados y asignación de mecánico.
+11. `VehicleControllerTest` (9 tests): validación de bastidor VIN de 17 caracteres, matrícula única y filtrado por cliente.
 
 ### 9.2 Ejecución de Pruebas
 ```bash
@@ -480,7 +485,6 @@ Para incorporar un nuevo módulo al sistema sin romper la arquitectura existente
 
 ## 11. Limitaciones Conocidas y Deuda Técnica
 
-1. **Módulo de Dashboard (Fase 14):** Actualmente el componente `dashboard.component.ts` tiene datos hardcodeados en el HTML/TS provenientes de la Fase 6. Requiere la creación de `modules/dashboard/` en el backend para suministrar estadísticas dinámicas agregadas.
-2. **Entidades JPA pendientes de mapear:** Las tablas `repair_order_parts` y `work_logs` están creadas en el DDL de PostgreSQL (`01-schema.sql`), pero aún no cuentan con entidades JPA mapeadas en Java.
-3. **Frontend Testing:** Actualmente no hay pruebas unitarias escritas con Jasmine/Karma para los componentes y servicios de Angular (solo el test por defecto `app.component.spec.ts`).
-4. **Dockerización completa:** El archivo `docker-compose.yml` actual solo contiene PostgreSQL. Falta la definición de `Dockerfile` para el backend Spring Boot y para el frontend Angular con Nginx en contenedor.
+1. **Entidades JPA pendientes de mapear:** Las tablas `repair_order_parts` y `work_logs` están creadas en el DDL de PostgreSQL (`01-schema.sql`), pero aún no cuentan con entidades JPA mapeadas en Java.
+2. **Frontend Testing:** Actualmente no hay pruebas unitarias escritas con Jasmine/Karma para los componentes y servicios de Angular (solo el test por defecto `app.component.spec.ts`).
+3. **Dockerización completa:** El archivo `docker-compose.yml` actual solo contiene PostgreSQL. Falta la definición de `Dockerfile` para el backend Spring Boot y para el frontend Angular con Nginx en contenedor.

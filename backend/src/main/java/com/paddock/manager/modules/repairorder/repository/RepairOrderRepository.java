@@ -60,5 +60,15 @@ public interface RepairOrderRepository extends JpaRepository<RepairOrder, Long> 
     Optional<String> findLastOrderNumberWithPrefix(@Param("prefix") String prefix);
 
     long countByStatus(RepairOrderStatus status);
+
+    @Query("SELECT COUNT(DISTINCT r.vehicle.id) FROM RepairOrder r WHERE r.status NOT IN :excludedStatuses")
+    long countDistinctVehiclesByStatusNotIn(@Param("excludedStatuses") java.util.List<RepairOrderStatus> excludedStatuses);
+
+    @Query("SELECT COUNT(r) FROM RepairOrder r WHERE r.status NOT IN :excludedStatuses")
+    long countByStatusNotIn(@Param("excludedStatuses") java.util.List<RepairOrderStatus> excludedStatuses);
+
+    @EntityGraph(attributePaths = {"customer", "vehicle", "mechanic"})
+    @Query("SELECT r FROM RepairOrder r WHERE r.status NOT IN :excludedStatuses ORDER BY r.id DESC")
+    java.util.List<RepairOrder> findRecentActiveOrders(@Param("excludedStatuses") java.util.List<RepairOrderStatus> excludedStatuses, Pageable pageable);
 }
 

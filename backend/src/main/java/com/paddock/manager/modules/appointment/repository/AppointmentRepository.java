@@ -68,5 +68,12 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
     /** Cuenta citas activas (no completadas ni canceladas) de un cliente */
     long countByCustomerIdAndStatusNotIn(Long customerId, List<AppointmentStatus> statuses);
+
+    /** Cuenta citas programadas entre dos marcas temporales */
+    @Query("SELECT COUNT(a) FROM Appointment a WHERE a.appointmentDateTime >= :startOfDay AND a.appointmentDateTime <= :endOfDay")
+    long countAppointmentsBetween(
+            @Param("startOfDay") ZonedDateTime startOfDay,
+            @Param("endOfDay") ZonedDateTime endOfDay
+    );
 }
 
