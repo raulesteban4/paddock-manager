@@ -104,9 +104,12 @@ flowchart TD
 - **Sincronización bidireccional de estados**: Al crear un presupuesto en `DIAGNOSIS`, la orden avanza a `QUOTE_PENDING`. Al ser aprobado por el cliente, avanza automáticamente la orden de reparación a `APPROVED` y queda bloqueada su edición.
 - Vista de impresión profesional / formato factura para entrega o envío al cliente.
 
-### 8. Inventario y Repuestos *(En desarrollo - Fase 13)*
-- Catálogo de repuestos con código de referencia, fabricante, proveedor y stock disponible.
-- Alertas de stock mínimo para reposición automática.
+### 8. Inventario y Repuestos (Part & Inventory Module)
+- Catálogo de repuestos con código de referencia único, fabricante, proveedor, precio de coste y precio de venta sin IVA.
+- Control de existencias en tiempo real y cálculo automático de margen comercial proyectado.
+- **Ajustes rápidos de stock**: Entradas de almacén (recepciones / albaranes) y salidas / consumos de taller con trazabilidad de motivo y **bloqueo estricto contra existencias negativas**.
+- **Alertas de reposición inmediata**: Detección y filtrado de piezas con existencias en o por debajo del umbral de stock mínimo (`lowStock = true`).
+- Métricas y valoración financiera del almacén: total de referencias activas, piezas críticas y valoración monetaria total a precio de coste y a precio de venta minorista.
 
 ---
 
@@ -128,7 +131,9 @@ paddock-manager/
 │           ├── vehicle/           # Ficha de vehículos y vinculación con clientes
 │           ├── appointment/       # Gestión de citas y disponibilidad
 │           ├── repairorder/       # Órdenes de trabajo, historial y transiciones
-│           └── diagnosis/         # Diagnósticos técnicos y recomendaciones
+│           ├── diagnosis/         # Diagnósticos técnicos y recomendaciones
+│           ├── budget/            # Presupuestos, cálculo de IVA y partidas
+│           └── part/              # Inventario, piezas, ajustes y valoración de stock
 │
 ├── frontend/                      # Angular 18 Standalone App
 │   └── src/app/
@@ -309,7 +314,7 @@ cd backend
 .\mvnw.cmd test
 ```
 
-> **Resultado actual:** **43 de 43 pruebas pasando con éxito (`BUILD SUCCESS`)**.
+> **Resultado actual:** **57 de 57 pruebas pasando con éxito (`BUILD SUCCESS`)** (Appointment, Customer, Vehicle, RepairOrder, Diagnosis, Budget y Part integration tests).
 
 ---
 
@@ -329,8 +334,8 @@ cd backend
 | **10** | Órdenes de Reparación (Secuencial ORD, máquina de estados y timeline) | ✅ Completada |
 | **11** | Diagnósticos Técnicos (Diagnosis 1:1, hallazgos y recomendaciones) | ✅ Completada |
 | **12** | Presupuestos y Líneas de Trabajo (Budgets, IVA 21% y aprobación) | ✅ Completada |
-| **13** | **Inventario, Repuestos y Alertas de Stock Mínimo** | ⏳ *Siguiente* |
-| **14** | Dashboard de Taller, Métricas y KPIs de Facturación | 📋 Planificada |
+| **13** | **Inventario, Repuestos y Alertas de Stock Mínimo** | ✅ Completada |
+| **14** | **Dashboard de Taller, Métricas y KPIs de Facturación** | ⏳ *Siguiente* |
 | **15** | Optimización Responsive, Modo Oscuro y Pulido UX | 📋 Planificada |
 | **16** | Cobertura de Pruebas End-to-End y Unitarias | 📋 Planificada |
 | **17** | Contenedorización Multi-Stage (Docker Compose Full Stack) | 📋 Planificada |
