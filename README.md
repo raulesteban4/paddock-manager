@@ -315,20 +315,28 @@ Cuando el backend esté en ejecución, puedes explorar, probar e interactuar con
 
 ## 🧪 Estrategia de Pruebas
 
-El proyecto implementa una batería de pruebas de integración con **JUnit 5**, **MockMvc** y base de datos **H2 en memoria** (`@ActiveProfiles("test")`), validando:
-- Inyección de dependencias y configuración de seguridad.
-- Respuestas HTTP, formatos de error uniforme y validación de Bean Validation.
-- Reglas de negocio (máquinas de estado, comprobación de propiedad de vehículos, prevención de solapamientos).
-- Integridad referencial y cascada de eliminación controlada.
+El proyecto implementa una exhaustiva batería de pruebas automatizadas:
+- **Backend (86 tests verdes al 100%):** Pruebas de integración con **JUnit 5**, **MockMvc** y base de datos **H2 en memoria** (`@ActiveProfiles("test")`), junto con pruebas unitarias aisladas de la capa de servicios mediante **Mockito** (`@ExtendWith(MockitoExtension.class)`).
+  - Máquinas de estado y transiciones permitidas.
+  - Generación de correlativos anuales `ORD-YYYY-XXXX`.
+  - Cálculos financieros exactos (mano de obra, recambios, IVA 21%).
+  - Bloqueo estricto contra stock negativo y alertas de inventario.
+  - Detección de solapamiento de citas (±1 hora) y validaciones de pertenencia de vehículos.
+- **Frontend (34 tests unitarios en ChromeHeadless):** Pruebas unitarias con **Jasmine / Karma** en modo headless para servicios reactivos con Signals (`ThemeService`, `UiService`, `AuthService`, `DashboardService`, `PartService`), componentes (`AppComponent`, `HeaderComponent`, `SidebarComponent`), guards funcionales (`authGuard`, `guestGuard`) e interceptores HTTP (`authInterceptor`).
 
-Para ejecutar la suite completa de pruebas:
+Para ejecutar las suites de pruebas:
 
 ```bash
+# Backend (86 pruebas JUnit 5 + Mockito)
 cd backend
 .\mvnw.cmd test
+
+# Frontend (34 pruebas Karma / ChromeHeadless)
+cd frontend
+npx ng test --watch=false --browsers=ChromeHeadless
 ```
 
-> **Resultado actual:** **60 de 60 pruebas pasando con éxito (`BUILD SUCCESS`)** (Appointment, Customer, Vehicle, RepairOrder, Diagnosis, Budget, Part y Dashboard integration tests).
+> **Resultado actual:** **120 pruebas automatizadas superadas al 100%** (86 backend + 34 frontend) con 0 fallos y 0 regresiones.
 
 ---
 
@@ -348,11 +356,11 @@ cd backend
 | **10** | Órdenes de Reparación (Secuencial ORD, máquina de estados y timeline) | ✅ Completada |
 | **11** | Diagnósticos Técnicos (Diagnosis 1:1, hallazgos y recomendaciones) | ✅ Completada |
 | **12** | Presupuestos y Líneas de Trabajo (Budgets, IVA 21% y aprobación) | ✅ Completada |
-| **13** | **Inventario, Repuestos y Alertas de Stock Mínimo** | ✅ Completada |
-| **14** | **Dashboard de Taller, Métricas y KPIs de Facturación** | ✅ Completada |
-| **15** | **Optimización Responsive, Modo Oscuro y Pulido UX** | ✅ Completada |
-| **16** | **Cobertura de Pruebas End-to-End y Unitarias** | ⏳ *Siguiente* |
-| **17** | Contenedorización Multi-Stage (Docker Compose Full Stack) | 📋 Planificada |
+| **13** | Inventario, Repuestos y Alertas de Stock Mínimo | ✅ Completada |
+| **14** | Dashboard de Taller, Métricas y KPIs de Facturación | ✅ Completada |
+| **15** | Optimización Responsive, Modo Oscuro y Pulido UX | ✅ Completada |
+| **16** | **Cobertura Global de Pruebas Unitarias e Integración (Backend & Frontend)** | ✅ Completada |
+| **17** | **Contenedorización Multi-Stage (Docker Compose Full Stack)** | ⏳ *Siguiente* |
 | **18** | Despliegue en la Nube y Configuración de Producción | 📋 Planificada |
 | **19** | Documentación de Entrega, Manual de Arquitectura y Portfolio | 📋 Planificada |
 

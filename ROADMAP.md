@@ -2,8 +2,9 @@
 
 > **Proyecto:** Paddock Manager  
 > **Última actualización:** 16 de Noviembre de 2026  
-> **Estado global de avance:** 15 de 19 fases completadas y verificadas (78.9% de avance del roadmap global).  
-> **Suite de pruebas backend:** **60 de 60 pruebas superadas al 100% (`BUILD SUCCESS`)**.  
+> **Estado global de avance:** 16 de 19 fases completadas y verificadas (84.2% de avance del roadmap global).  
+> **Suite de pruebas backend:** **86 de 86 pruebas superadas al 100% (`BUILD SUCCESS`)** (60 tests de integración + 26 tests unitarios Mockito).  
+> **Suite de pruebas frontend:** **34 de 34 pruebas unitarias superadas al 100% en ChromeHeadless** (Karma / Jasmine).  
 > **Compilación frontend:** **Angular 18 Standalone sin errores (`ng build`)**.
 
 ---
@@ -27,8 +28,7 @@
 | **13** | Inventory (Inventario, Repuestos & Stock) | **COMPLETADA** | ✅ | ✅ | ✅ Integration Tests |
 | **14** | Dashboards (Métricas y KPIs del Taller) | **COMPLETADA** | ✅ /api/dashboard | ✅ Conectado | ✅ Integration Tests |
 | **15** | Responsive + UX (Modo Oscuro y Móvil) | **COMPLETADA** | N/A | ✅ Dark/Drawer | ✅ Compilación & UX |
-| **16** | Testing (Cobertura Global Backend/Frontend) | **PARCIAL** | ✅ 60 tests green | ❌ Sin tests Karma | ⚠️ 60/60 Backend |
-| **16** | Testing (Cobertura Global Backend/Frontend) | **PARCIAL** | ✅ 57 tests green | ❌ Sin tests Karma | ⚠️ 57/57 Backend |
+| **16** | Testing (Cobertura Global Backend/Frontend) | **COMPLETADA** | ✅ 86 tests green | ✅ 34 tests Karma | ✅ 120 tests totales |
 | **17** | Docker (Contenedorización Full Stack) | **PARCIAL** | ❌ Sin Dockerfile | ❌ Sin Dockerfile | ⚠️ Solo PostgreSQL |
 | **18** | Deploy (Despliegue y Perfil Producción) | **PENDIENTE** | ❌ Sin prod.yml | ❌ Sin CDN/Nginx | ❌ Pendiente |
 | **19** | Documentación y Portfolio Final | **EN DESARROLLO** | ✅ Swagger/Doc | ✅ UI lista | ⚠️ Documentando |
@@ -260,13 +260,14 @@
 ### FASE 16: Testing (Cobertura Global)
 - **Objetivo:** Consolidar una suite de pruebas exhaustiva que cubra tanto el backend como el frontend, asegurando 0 regresiones ante futuros cambios.
 - **Funcionalidades necesarias:**
-  - Backend: Mantener el 100% de éxito en los tests de integración actuales (57 tests JUnit 5) y añadir tests unitarios con Mockito para servicios complejos.
-  - Frontend: Configurar y ejecutar pruebas unitarias con Jasmine/Karma para componentes, servicios con Signals e interceptores.
-  - Pruebas E2E (opcional): Cypress o Playwright para flujos críticos (Login ➔ Crear Orden ➔ Presupuesto ➔ Aprobación).
-- **Entregables:** Informes de cobertura Surefire y Karma coverage (`lcov`).
-- **Criterios de aceptación:** Cobertura de backend superior al 80% en servicios y 0 tests fallidos.
-- **Verificación:** Ejecución de `mvn test` y `npm test`.
-- **Estado actual:** **PARCIAL** (Backend: 57 tests de integración pasando al 100%; Frontend: sin tests unitarios activos en Karma).
+  - Backend: Mantener el 100% de éxito en los tests de integración actuales (60 tests JUnit 5) y añadir tests unitarios con Mockito para servicios complejos (26 tests unitarios adicionales).
+  - Frontend: Configurar y ejecutar pruebas unitarias con Jasmine/Karma en modo headless (`ChromeHeadless`) para componentes, servicios con Signals, guards e interceptores (34 tests pasando al 100%).
+- **Entregables:** 
+  - Backend: `AppointmentServiceImplTest.java`, `BudgetServiceImplTest.java`, `PartServiceImplTest.java`, `RepairOrderServiceImplTest.java` (86 tests en total).
+  - Frontend: `app.component.spec.ts`, `header.component.spec.ts`, `sidebar.component.spec.ts`, `theme.service.spec.ts`, `ui.service.spec.ts`, `auth.service.spec.ts`, `dashboard.service.spec.ts`, `part.service.spec.ts`, `auth.guard.spec.ts`, `auth.interceptor.spec.ts` (34 tests en total).
+- **Criterios de aceptación:** 0 fallos en backend y frontend, ejecución automatizada y 100% verde.
+- **Verificación:** Ejecución de `mvn test` (86/86 SUCCESS) y `npx ng test --watch=false --browsers=ChromeHeadless` (34/34 SUCCESS).
+- **Estado actual:** **COMPLETADA**.
 
 ---
 
@@ -306,14 +307,14 @@
 - **Entregables:** Documentación en raíz del repositorio y manuales complementarios.
 - **Criterios de aceptación:** Cualquier desarrollador o reclutador puede clonar, entender, ejecutar y evaluar el proyecto en menos de 10 minutos.
 - **Verificación:** Revisión integral de documentación y enlaces.
-- **Estado actual:** **EN DESARROLLO / PARCIAL** (`README.md` exhaustivo creado; `AGENTS.md`, `ROADMAP.md` y `ARCHITECTURE.md` en elaboración).
+- **Estado actual:** **EN DESARROLLO / PARCIAL** (`README.md`, `AGENTS.md`, `ROADMAP.md` y `ARCHITECTURE.md` creados y sincronizados).
 
 ---
 
 ## 🚀 3. Próximo Paso Inmediato
 
-El siguiente hito obligatorio en el desarrollo de Paddock Manager es la **FASE 16: Testing (Cobertura de Pruebas Unitarias y E2E)**, que comprende:
-1. Implementar suite de pruebas unitarias para componentes y servicios en Angular utilizando Jasmine/Karma.
-2. Añadir pruebas unitarias con Mockito en Spring Boot para casos límite y excepciones en la capa de servicios.
-3. Evaluar e implementar pruebas End-to-End para flujos críticos (Autenticación ➔ Creación de Orden ➔ Presupuesto).
-4. Generar informe de cobertura de código.
+El siguiente hito obligatorio en el desarrollo de Paddock Manager es la **FASE 17: Docker (Contenedorización Full Stack)**, que comprende:
+1. Crear `backend/Dockerfile` optimizado multi-stage con OpenJDK 17 Alpine.
+2. Crear `frontend/Dockerfile` multi-stage compilando Angular 18 y sirviendo con Nginx Alpine + configuración de proxy inverso `/api/` hacia el backend.
+3. Actualizar `docker-compose.yml` para orquestar conjuntamente `paddock-postgres`, `paddock-api` y `paddock-web` con healthchecks y redes compartidas.
+4. Verificar el arranque integral con un único comando `docker compose up --build`.

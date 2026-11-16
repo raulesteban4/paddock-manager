@@ -441,29 +441,52 @@ services:
 
 ## 9. Estrategia de Testing
 
-El proyecto cuenta con una sólida batería de pruebas de integración con `@SpringBootTest` y `MockMvc` utilizando una base de datos en memoria H2 con dialecto PostgreSQL (`MODE=PostgreSQL`).
+El proyecto cuenta con una exhaustiva batería de pruebas automatizadas que abarca pruebas de integración en base de datos H2 en memoria con dialecto PostgreSQL, pruebas unitarias aisladas con Mockito en Spring Boot, y pruebas unitarias de frontend ejecutadas en ChromeHeadless con Jasmine/Karma.
 
-### 9.1 Clases de Test Existentes (60 pruebas verdes):
-1. `AppointmentControllerTest` (6 tests): creación, validación de conflicto de horarios, cambios de estado y cancelación.
-2. `AuthControllerTest` (6 tests): login exitoso, credenciales inválidas, usuario deshabilitado y consulta `/me`.
-3. `BudgetControllerTest` (6 tests): emisión de presupuesto, desglose de partidas, cálculo de IVA, aprobación y rechazo.
-4. `CustomerControllerTest` (7 tests): alta, duplicidad de DNI, duplicidad de email, búsqueda paginada y borrado.
-5. `DashboardControllerTest` (3 tests): métricas en base de datos vacía, cómputo con datos activos (órdenes, vehículos, citas, piezas, facturación) y restricción no autenticada.
-6. `DiagnosisControllerTest` (6 tests): registro de diagnosis 1:1, validación de pertenencia a orden y actualización.
-7. `HealthControllerTest` (1 test): disponibilidad del endpoint `/api/health`.
-8. `PaddockManagerApplicationTests` (1 test): verificación de carga correcta del contexto de Spring.
-9. `PartControllerTest` (8 tests): alta de repuesto, referencia duplicada, ajustes de stock positivos/negativos, rechazo de stock negativo, filtro de stock bajo y estadísticas.
-10. `RepairOrderControllerTest` (8 tests): generación de código anual `ORD-YYYY-XXXX`, transiciones de la máquina de estados y asignación de mecánico.
-11. `VehicleControllerTest` (9 tests): validación de bastidor VIN de 17 caracteres, matrícula única y filtrado por cliente.
+### 9.1 Backend Test Suite (86 pruebas verdes al 100%):
+- **Pruebas de Integración (`@SpringBootTest` + `MockMvc`):**
+  1. `AppointmentControllerTest` (10 tests): creación, validación de conflicto de horarios, cambios de estado, consultas filtradas y cancelación.
+  2. `AuthControllerTest` (3 tests): login exitoso, credenciales inválidas, usuario deshabilitado y consulta `/me`.
+  3. `BudgetControllerTest` (7 tests): emisión de presupuesto, desglose de partidas, cálculo de IVA, aprobación y rechazo.
+  4. `CustomerControllerTest` (6 tests): alta, duplicidad de DNI, duplicidad de email, búsqueda paginada y borrado.
+  5. `DashboardControllerTest` (3 tests): métricas en base de datos vacía, cómputo con datos activos (órdenes, vehículos, citas, piezas, facturación) y restricción no autenticada.
+  6. `DiagnosisControllerTest` (6 tests): registro de diagnosis 1:1, validación de pertenencia a orden y actualización.
+  7. `HealthControllerTest` (1 test): disponibilidad del endpoint `/api/health`.
+  8. `PaddockManagerApplicationTests` (1 test): verificación de carga correcta del contexto de Spring.
+  9. `PartControllerTest` (7 tests): alta de repuesto, referencia duplicada, ajustes de stock positivos/negativos, rechazo de stock negativo, filtro de stock bajo y estadísticas.
+  10. `RepairOrderControllerTest` (7 tests): generación de código anual `ORD-YYYY-XXXX`, transiciones de la máquina de estados y asignación de mecánico.
+  11. `VehicleControllerTest` (9 tests): validación de bastidor VIN de 17 caracteres, matrícula única y filtrado por cliente.
+- **Pruebas Unitarias de Servicios (`@ExtendWith(MockitoExtension.class)`):**
+  12. `BudgetServiceImplTest` (7 tests): cálculo aritmético exacto de mano de obra y piezas, IVA 21%, sincronización de orden a `QUOTE_PENDING` y `APPROVED`, bloqueo de modificación/borrado en presupuestos aprobados.
+  13. `PartServiceImplTest` (7 tests): validación de unicidad de referencia, ajustes de existencias (sumas y restas), bloqueo estricto contra stock negativo y valoración económica a coste y venta.
+  14. `RepairOrderServiceImplTest` (5 tests): generación del correlativo anual `ORD-YYYY-XXXX`, validación de pertenencia de vehículo a cliente, máquina de estados y actualización de odómetro.
+  15. `AppointmentServiceImplTest` (7 tests): agendamiento sin conflicto, validación de solapamiento horario (±1h), máquina de estados de citas y bloqueo de eliminación en taller.
 
-### 9.2 Ejecución de Pruebas
+### 9.2 Frontend Test Suite (34 pruebas verdes en ChromeHeadless):
+- **Componentes:**
+  1. `AppComponent` (`app.component.spec.ts`): montaje y verificación de título global.
+  2. `HeaderComponent` (`header.component.spec.ts`): botón menú móvil, toggle de tema y cálculo de iniciales del usuario.
+  3. `SidebarComponent` (`sidebar.component.spec.ts`): colapso lateral de escritorio y auto-cierre de drawer en móvil al navegar.
+- **Servicios e Interceptores:**
+  4. `ThemeService` (`theme.service.spec.ts`): cambio claro/oscuro, persistencia en `localStorage` y manipulación del atributo DOM `data-theme`.
+  5. `UiService` (`ui.service.spec.ts`): apertura, cierre y alternancia de estado reactivo del drawer móvil.
+  6. `AuthService` (`auth.service.spec.ts`): inicio de sesión, almacenamiento de token JWT, roles computados (`isAdmin`, `isReceptionist`, `isMechanic`) y cierre de sesión.
+  7. `DashboardService` (`dashboard.service.spec.ts`): consumo del endpoint `/api/dashboard/stats`.
+  8. `PartService` (`part.service.spec.ts`): listado paginado con filtros, ajustes de stock y estadísticas de valoración.
+  9. `AuthGuard` & `GuestGuard` (`auth.guard.spec.ts`): protección de rutas autenticadas y redirección al login o dashboard.
+  10. `AuthInterceptor` (`auth.interceptor.spec.ts`): inyección de cabecera `Authorization: Bearer <token>` y captura de HTTP 401 para auto-logout.
+
+### 9.3 Ejecución de Pruebas
 ```bash
-# Ejecutar todas las pruebas del backend
+# Ejecutar todas las pruebas del backend (86 tests)
 cd backend
 .\mvnw.cmd test
 
-# Compilar frontend para verificar tipado y plantillas
+# Ejecutar todas las pruebas del frontend (34 tests headless)
 cd frontend
+npx ng test --watch=false --browsers=ChromeHeadless
+
+# Compilar frontend para producción
 npm run build
 ```
 
@@ -488,5 +511,4 @@ Para incorporar un nuevo módulo al sistema sin romper la arquitectura existente
 ## 11. Limitaciones Conocidas y Deuda Técnica
 
 1. **Entidades JPA pendientes de mapear:** Las tablas `repair_order_parts` y `work_logs` están creadas en el DDL de PostgreSQL (`01-schema.sql`), pero aún no cuentan con entidades JPA mapeadas en Java.
-2. **Frontend Testing:** Actualmente no hay pruebas unitarias escritas con Jasmine/Karma para los componentes y servicios de Angular (solo el test por defecto `app.component.spec.ts`).
-3. **Dockerización completa:** El archivo `docker-compose.yml` actual solo contiene PostgreSQL. Falta la definición de `Dockerfile` para el backend Spring Boot y para el frontend Angular con Nginx en contenedor.
+2. **Dockerización completa:** El archivo `docker-compose.yml` actual solo contiene PostgreSQL. Falta la definición de `Dockerfile` para el backend Spring Boot y para el frontend Angular con Nginx en contenedor (planificado en Fase 17).

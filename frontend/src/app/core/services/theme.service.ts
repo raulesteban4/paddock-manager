@@ -28,11 +28,18 @@ export class ThemeService {
   }
 
   toggleTheme(): void {
-    this.theme.update(t => (t === 'light' ? 'dark' : 'light'));
+    const next: Theme = this.theme() === 'light' ? 'dark' : 'light';
+    this.setTheme(next);
   }
 
   setTheme(theme: Theme): void {
     this.theme.set(theme);
+    this.applyTheme(theme);
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+    } catch (e) {
+      // Ignorar errores de acceso
+    }
   }
 
   private getInitialTheme(): Theme {
