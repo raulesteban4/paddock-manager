@@ -162,6 +162,8 @@ frontend/src/app/
 │       ├── diagnosis.service.ts
 │       ├── part.service.ts
 │       ├── repair-order.service.ts
+│       ├── theme.service.ts          # Gestión de modo oscuro/claro y persistencia
+│       ├── ui.service.ts             # Estado de interfaz (menú móvil, drawer)
 │       └── vehicle.service.ts
 ├── features/                         # Vistas y pantallas funcionales
 │   ├── appointments/                 # Gestión de citas

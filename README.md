@@ -118,6 +118,12 @@ flowchart TD
 - **Tabla operativa viva**: Listado de las órdenes activas más recientes con acceso directo a su gestión.
 - Desglose y mapa operativo de estados de trabajo para el jefe de taller y recepción.
 
+### 10. Experiencia de Usuario Responsiva y Modo Oscuro (Responsive UX & Dark Mode)
+- **Modo Oscuro Integrado**: Selector de tema visual (☀️/🌙) con persistencia en `localStorage` y detección automática de preferencia del sistema operativo (`prefers-color-scheme`).
+- **Navegación Móvil Drawer**: Menú lateral adaptable para smartphones y tablets (`< 768px`) con animación deslizante, botón hamburguesa (☰) y backdrop táctil.
+- **Accesibilidad (WCAG AA)**: Indicadores de foco `:focus-visible`, contraste de color optimizado y soporte para navegación táctil y por teclado.
+- **Tablas de datos fluidas**: Contenedor `.table-responsive` con scroll horizontal optimizado y scrollbars táctiles.
+
 ---
 
 ## 🏛️ Arquitectura del Sistema
@@ -344,8 +350,8 @@ cd backend
 | **12** | Presupuestos y Líneas de Trabajo (Budgets, IVA 21% y aprobación) | ✅ Completada |
 | **13** | **Inventario, Repuestos y Alertas de Stock Mínimo** | ✅ Completada |
 | **14** | **Dashboard de Taller, Métricas y KPIs de Facturación** | ✅ Completada |
-| **15** | **Optimización Responsive, Modo Oscuro y Pulido UX** | ⏳ *Siguiente* |
-| **16** | Cobertura de Pruebas End-to-End y Unitarias | 📋 Planificada |
+| **15** | **Optimización Responsive, Modo Oscuro y Pulido UX** | ✅ Completada |
+| **16** | **Cobertura de Pruebas End-to-End y Unitarias** | ⏳ *Siguiente* |
 | **17** | Contenedorización Multi-Stage (Docker Compose Full Stack) | 📋 Planificada |
 | **18** | Despliegue en la Nube y Configuración de Producción | 📋 Planificada |
 | **19** | Documentación de Entrega, Manual de Arquitectura y Portfolio | 📋 Planificada |

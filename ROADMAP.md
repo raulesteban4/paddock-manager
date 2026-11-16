@@ -1,8 +1,8 @@
 # 🗺️ ROADMAP.md — Hoja de Ruta y Seguimiento de Desarrollo
 
 > **Proyecto:** Paddock Manager  
-> **Última actualización:** 11 de Noviembre de 2026  
-> **Estado global de avance:** 14 de 19 fases completadas y verificadas (73.7% de avance del roadmap global).  
+> **Última actualización:** 16 de Noviembre de 2026  
+> **Estado global de avance:** 15 de 19 fases completadas y verificadas (78.9% de avance del roadmap global).  
 > **Suite de pruebas backend:** **60 de 60 pruebas superadas al 100% (`BUILD SUCCESS`)**.  
 > **Compilación frontend:** **Angular 18 Standalone sin errores (`ng build`)**.
 
@@ -26,7 +26,8 @@
 | **12** | Budgets (Presupuestos, IVA e Impresión) | **COMPLETADA** | ✅ | ✅ | ✅ Integration Tests |
 | **13** | Inventory (Inventario, Repuestos & Stock) | **COMPLETADA** | ✅ | ✅ | ✅ Integration Tests |
 | **14** | Dashboards (Métricas y KPIs del Taller) | **COMPLETADA** | ✅ /api/dashboard | ✅ Conectado | ✅ Integration Tests |
-| **15** | Responsive + UX (Modo Oscuro y Móvil) | **PARCIAL** | N/A | ⚠️ Adaptable básico | ⚠️ Visual |
+| **15** | Responsive + UX (Modo Oscuro y Móvil) | **COMPLETADA** | N/A | ✅ Dark/Drawer | ✅ Compilación & UX |
+| **16** | Testing (Cobertura Global Backend/Frontend) | **PARCIAL** | ✅ 60 tests green | ❌ Sin tests Karma | ⚠️ 60/60 Backend |
 | **16** | Testing (Cobertura Global Backend/Frontend) | **PARCIAL** | ✅ 57 tests green | ❌ Sin tests Karma | ⚠️ 57/57 Backend |
 | **17** | Docker (Contenedorización Full Stack) | **PARCIAL** | ❌ Sin Dockerfile | ❌ Sin Dockerfile | ⚠️ Solo PostgreSQL |
 | **18** | Deploy (Despliegue y Perfil Producción) | **PENDIENTE** | ❌ Sin prod.yml | ❌ Sin CDN/Nginx | ❌ Pendiente |
@@ -243,14 +244,16 @@
 ### FASE 15: Responsive + UX (Modo Oscuro y Móvil)
 - **Objetivo:** Pulir la experiencia de usuario multidispositivo, optimizar navegación en tablets y smartphones de taller, e incorporar selector de tema (Modo Oscuro).
 - **Funcionalidades necesarias:**
-  - Menú lateral (Sidebar) colapsable en drawer para pantallas móviles (`< 768px`).
-  - Tablas con scroll horizontal optimizado o visualización en tarjetas compactas en móvil.
-  - Soporte de tema visual (Dark Theme / Light Theme) mediante variables CSS.
-  - Accesibilidad de teclado y contraste de color accesible (WCAG AA).
-- **Entregables:** Hoja de estilos `theme-dark.scss`, directiva de cambio de tema, adaptaciones en modales.
-- **Criterios de aceptación:** Usabilidad táctil en tablets utilizadas por mecánicos a pie de elevador.
-- **Verificación:** Pruebas con emulador responsive de Chrome DevTools en diversas resoluciones.
-- **Estado actual:** **PARCIAL** (El diseño actual cuenta con media queries y diseño limpio, pero carece de modo oscuro y menú móvil colapsable).
+  - `ThemeService`: Servicio reactivo con Signals para alternar entre Modo Claro y Modo Oscuro, con persistencia en `localStorage` y detección automática de preferencia OS (`prefers-color-scheme`).
+  - Variables CSS completas para tema oscuro (`[data-theme="dark"]`, `.dark-theme`) en `styles.scss`, adaptando tarjetas, tablas, formularios, modales y botones.
+  - `UiService`: Servicio de estado para control del drawer de navegación móvil.
+  - `HeaderComponent`: Botón toggle de tema visual (☀️/🌙) y botón menú hamburguesa (☰) para pantallas reducidas (`< 768px`).
+  - `SidebarComponent`: Drawer deslizante en móvil con animación, backdrop táctil desenfocado y autocierre al hacer clic en enlaces.
+  - Accesibilidad: Indicadores de foco `:focus-visible` conforme al estándar WCAG AA y scrollbars fluidos `.table-responsive`.
+- **Entregables:** `theme.service.ts`, `ui.service.ts`, actualización de `header.component.ts`, `sidebar.component.ts`, `app.component.ts` y `styles.scss`.
+- **Criterios de aceptación:** Interfaz completamente operable y legible en smartphones/tablets, transición suave de tema y persistencia de preferencia visual.
+- **Verificación:** Compilación con `ng build` exitosa (0 errores), pruebas de diseño responsivo.
+- **Estado actual:** **COMPLETADA**.
 
 ---
 
@@ -309,8 +312,8 @@
 
 ## 🚀 3. Próximo Paso Inmediato
 
-El siguiente hito obligatorio en el desarrollo de Paddock Manager es la **FASE 15: Responsive + UX (Modo Oscuro y Móvil)**, que comprende:
-1. Optimizar el menú lateral (`SidebarComponent`) con soporte para drawer colapsable en dispositivos móviles (`< 768px`).
-2. Implementar selector de tema (Modo Oscuro / Modo Claro) persistente mediante CSS custom properties y `localStorage`.
-3. Mejorar la visualización responsiva de tablas de datos complejas en pantallas reducidas.
-4. Pulir la accesibilidad de contrastes de color según los estándares WCAG AA.
+El siguiente hito obligatorio en el desarrollo de Paddock Manager es la **FASE 16: Testing (Cobertura de Pruebas Unitarias y E2E)**, que comprende:
+1. Implementar suite de pruebas unitarias para componentes y servicios en Angular utilizando Jasmine/Karma.
+2. Añadir pruebas unitarias con Mockito en Spring Boot para casos límite y excepciones en la capa de servicios.
+3. Evaluar e implementar pruebas End-to-End para flujos críticos (Autenticación ➔ Creación de Orden ➔ Presupuesto).
+4. Generar informe de cobertura de código.

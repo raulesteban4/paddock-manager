@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { UiService } from '../../../core/services/ui.service';
 
 interface NavItem {
   label: string;
@@ -14,7 +15,21 @@ interface NavItem {
   standalone: true,
   imports: [CommonModule, RouterModule],
   template: `
-    <aside class="sidebar" [class.collapsed]="isCollapsed()">
+    <!-- Backdrop táctil para móviles -->
+    @if (uiService.sidebarMobileOpen()) {
+      <div 
+        class="sidebar-backdrop" 
+        (click)="uiService.closeMobileSidebar()"
+        aria-hidden="true">
+      </div>
+    }
+
+    <aside 
+      class="sidebar" 
+      [class.collapsed]="isCollapsed()" 
+      [class.mobile-open]="uiService.sidebarMobileOpen()"
+      aria-label="Navegación principal">
+      
       <div class="sidebar-header">
         <div class="brand">
           <div class="brand-icon">🏎️</div>
@@ -25,9 +40,28 @@ interface NavItem {
             </div>
           }
         </div>
-        <button class="toggle-btn" (click)="toggleCollapse()" title="Colapsar menú">
-          {{ isCollapsed() ? '→' : '←' }}
-        </button>
+
+        <div class="header-controls">
+          <!-- Botón de colapso en escritorio -->
+          <button 
+            type="button"
+            class="toggle-btn desktop-only" 
+            (click)="toggleCollapse()" 
+            [title]="isCollapsed() ? 'Expandir menú' : 'Colapsar menú'"
+            [attr.aria-label]="isCollapsed() ? 'Expandir menú lateral' : 'Colapsar menú lateral'">
+            {{ isCollapsed() ? '→' : '←' }}
+          </button>
+
+          <!-- Botón de cierre en móvil -->
+          <button 
+            type="button"
+            class="close-btn mobile-only" 
+            (click)="uiService.closeMobileSidebar()" 
+            aria-label="Cerrar menú lateral"
+            title="Cerrar">
+            ✕
+          </button>
+        </div>
       </div>
 
       <nav class="sidebar-nav">
@@ -38,6 +72,7 @@ interface NavItem {
                  routerLinkActive="active" 
                  [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
                  class="nav-link"
+                 (click)="onNavClick()"
                  [title]="item.label">
                 <span class="nav-icon">{{ item.icon }}</span>
                 @if (!isCollapsed()) {
@@ -64,6 +99,21 @@ interface NavItem {
     </aside>
   `,
   styles: [`
+    /* Backdrop para oscurecer la vista en móvil */
+    .sidebar-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(3px);
+      z-index: 998;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
     .sidebar {
       width: 250px;
       height: 100vh;
@@ -71,7 +121,7 @@ interface NavItem {
       display: flex;
       flex-direction: column;
       border-right: 1px solid rgba(255, 255, 255, 0.08);
-      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       position: sticky;
       top: 0;
       z-index: 50;
@@ -86,6 +136,22 @@ interface NavItem {
         .nav-link {
           justify-content: center;
           padding: 0.75rem 0;
+        }
+      }
+
+      /* ── Adaptación para móvil y tabletas pequeñas ── */
+      @media (max-width: 768px) {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 270px !important;
+        z-index: 999;
+        transform: translateX(-100%);
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+
+        &.mobile-open {
+          transform: translateX(0);
         }
       }
     }
@@ -128,6 +194,12 @@ interface NavItem {
       }
     }
 
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
     .toggle-btn {
       background: transparent;
       border: 1px solid rgba(255, 255, 255, 0.15);
@@ -144,6 +216,39 @@ interface NavItem {
       &:hover {
         background: var(--sidebar-hover);
         color: #ffffff;
+      }
+    }
+
+    .close-btn {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+      }
+    }
+
+    .desktop-only {
+      @media (max-width: 768px) {
+        display: none !important;
+      }
+    }
+
+    .mobile-only {
+      display: none;
+      @media (max-width: 768px) {
+        display: flex !important;
       }
     }
 
@@ -245,6 +350,7 @@ interface NavItem {
   `]
 })
 export class SidebarComponent {
+  readonly uiService = inject(UiService);
   isCollapsed = signal<boolean>(false);
 
   navItems: NavItem[] = [
@@ -252,13 +358,18 @@ export class SidebarComponent {
     { label: 'Clientes', route: '/customers', icon: '👥' },
     { label: 'Vehículos', route: '/vehicles', icon: '🚗' },
     { label: 'Citas', route: '/appointments', icon: '📅' },
-    { label: 'Órdenes de Trabajo', route: '/repair-orders', icon: '🔧', badge: '3' },
+    { label: 'Órdenes de Trabajo', route: '/repair-orders', icon: '🔧' },
     { label: 'Diagnósticos', route: '/diagnoses', icon: '🔍' },
     { label: 'Presupuestos', route: '/budgets', icon: '💶' },
     { label: 'Inventario & Piezas', route: '/inventory', icon: '📦' }
   ];
 
-  toggleCollapse() {
+  toggleCollapse(): void {
     this.isCollapsed.update(val => !val);
+  }
+
+  onNavClick(): void {
+    // Si estamos en vista móvil, cerramos automáticamente el drawer al navegar
+    this.uiService.closeMobileSidebar();
   }
 }

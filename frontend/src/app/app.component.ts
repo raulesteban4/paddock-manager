@@ -4,6 +4,7 @@ import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
 import { HeaderComponent } from './shared/components/header/header.component';
 import { AuthService } from './core/services/auth.service';
+import { ThemeService } from './core/services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -32,6 +33,7 @@ import { AuthService } from './core/services/auth.service';
       min-height: 100vh;
       width: 100%;
       background-color: var(--bg-app);
+      transition: background-color 0.2s ease;
     }
 
     .main-wrapper {
@@ -49,12 +51,13 @@ import { AuthService } from './core/services/auth.service';
       margin: 0 auto;
 
       @media (max-width: 768px) {
-        padding: 1rem;
+        padding: 1rem 0.75rem;
       }
     }
   `]
 })
 export class AppComponent {
   readonly authService = inject(AuthService);
+  readonly themeService = inject(ThemeService);
   title = 'Paddock Manager';
 }
