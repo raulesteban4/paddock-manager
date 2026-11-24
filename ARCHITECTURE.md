@@ -404,8 +404,8 @@ erDiagram
 
 ## 8. Infraestructura Local y Despliegue con Docker
 
-### 8.1 Contenedor de Base de Datos
-El archivo `docker-compose.yml` en la raíz gestiona el servicio de persistencia:
+### 8.1 Orquestación Full Stack (`docker-compose.yml`)
+El archivo `docker-compose.yml` en la raíz orquesta el ecosistema completo sin necesidad de instalar Java, Node o PostgreSQL en el sistema anfitrión:
 
 ```yaml
 services:
@@ -416,26 +416,94 @@ services:
     env_file:
       - .env
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-paddock_db}
+      POSTGRES_USER: ${POSTGRES_USER:-paddock_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-paddock_secure_pass_2026}
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-paddock_user} -d ${POSTGRES_DB:-paddock_db}"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - paddock-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: paddock-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-paddock_db}
+      POSTGRES_USER: ${POSTGRES_USER:-paddock_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-paddock_secure_pass_2026}
+      JWT_SECRET: ${JWT_SECRET:-404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/api/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - paddock-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: paddock-web
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost/ || exit 1"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+    networks:
+      - paddock-network
+
+networks:
+  paddock-network:
+    name: paddock_network
+    driver: bridge
+
+volumes:
+  postgres_data:
+    name: paddock_postgres_data
 ```
 
-### 8.2 Variables de Entorno (`.env`)
+### 8.2 Dockerfiles Multi-Stage
+- **`backend/Dockerfile`:**
+  - **Stage 1 (Builder):** `maven:3.9.6-eclipse-temurin-17-alpine` con pre-descarga de dependencias (`mvn dependency:go-offline`) y empaquetado seguro (`mvn clean package -DskipTests`).
+  - **Stage 2 (Runtime):** `eclipse-temurin:17-jre-alpine` con creación de usuario y grupo de sistema sin privilegios `paddock` y healthcheck en `/api/health`.
+- **`frontend/Dockerfile` & `nginx.conf`:**
+  - **Stage 1 (Builder):** `node:20-alpine` con `npm ci` y compilación optimizada de Angular 18 (`npm run build --configuration production`).
+  - **Stage 2 (Runtime):** `nginx:alpine` sirviendo los estáticos desde `/usr/share/nginx/html`, compresión gzip, enrutamiento SPA (`try_files $uri $uri/ /index.html`) y reverse proxy `/api/` y `/swagger-ui/` hacia `paddock-api:8080`.
+
+### 8.3 Variables de Entorno (`.env`)
 - `POSTGRES_DB=paddock_db`
 - `POSTGRES_USER=paddock_user`
 - `POSTGRES_PASSWORD=paddock_secure_pass_2026`
 - `POSTGRES_PORT=5432`
+- `BACKEND_PORT=8080`
+- `FRONTEND_PORT=80`
 
 ---
 
@@ -511,4 +579,4 @@ Para incorporar un nuevo módulo al sistema sin romper la arquitectura existente
 ## 11. Limitaciones Conocidas y Deuda Técnica
 
 1. **Entidades JPA pendientes de mapear:** Las tablas `repair_order_parts` y `work_logs` están creadas en el DDL de PostgreSQL (`01-schema.sql`), pero aún no cuentan con entidades JPA mapeadas en Java.
-2. **Dockerización completa:** El archivo `docker-compose.yml` actual solo contiene PostgreSQL. Falta la definición de `Dockerfile` para el backend Spring Boot y para el frontend Angular con Nginx en contenedor (planificado en Fase 17).
+2. **Entorno de producción Cloud (Fase 18):** Preparación del perfil `application-prod.yml` y configuración del pipeline de CI/CD para despliegue automatizado.

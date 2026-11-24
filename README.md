@@ -238,35 +238,49 @@ cd paddock-manager
 
 ---
 
-### Paso 2: Iniciar Base de Datos con Docker
+### Paso 2: Despliegue con Docker Compose (Full Stack)
 
-El proyecto incluye un `docker-compose.yml` preconfigurado con PostgreSQL 16 y scripts automáticos de inicialización de esquema y datos de prueba:
+El proyecto incluye un `docker-compose.yml` multi-contenedor que levanta en un único comando la base de datos PostgreSQL 16, la API de Spring Boot 3 y la aplicación web Angular 18 con Nginx:
 
 ```bash
-docker compose up -d
+docker compose up --build -d
 ```
 
-> **Verificación:** El contenedor `paddock-postgres` estará disponible en el puerto `5432` con usuario `paddock_user` y contraseña `paddock_secret`.
+> **Servicios levantados automáticamente:**
+> - **Frontend (SPA Angular + Nginx):** [http://localhost](http://localhost) (o puerto 80)
+> - **Backend API REST (Spring Boot):** [http://localhost:8080](http://localhost:8080)
+> - **Documentación Swagger UI:** [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+> - **Base de Datos PostgreSQL 16:** `localhost:5432` (usuario: `paddock_user`, base de datos: `paddock_db`)
 
 ---
 
-### Paso 3: Arrancar el Backend (Spring Boot)
+### Paso 3: Ejecución Local para Desarrollo (Opcional sin Docker)
 
-Abre una terminal en la carpeta `backend`:
+Si prefieres ejecutar los componentes de forma individual en tu máquina local:
 
+#### 3.1 Base de datos
+```bash
+docker compose up postgres -d
+```
+
+#### 3.2 Backend (Spring Boot 3)
+Abre una terminal en `backend`:
 ```bash
 cd backend
-
-# En Windows (PowerShell / CMD):
+# Windows:
 .\mvnw.cmd spring-boot:run
-
-# En Linux / macOS:
+# Linux / macOS:
 ./mvnw spring-boot:run
 ```
 
-El servidor API arrancará en: **`http://localhost:8080`**.
-
----
+#### 3.3 Frontend (Angular 18 Standalone)
+Abre otra terminal en `frontend`:
+```bash
+cd frontend
+npm install
+npm start
+```
+Disponible en **`http://localhost:4200`**.
 
 ### Paso 4: Arrancar el Frontend (Angular 18)
 
@@ -359,9 +373,9 @@ npx ng test --watch=false --browsers=ChromeHeadless
 | **13** | Inventario, Repuestos y Alertas de Stock Mínimo | ✅ Completada |
 | **14** | Dashboard de Taller, Métricas y KPIs de Facturación | ✅ Completada |
 | **15** | Optimización Responsive, Modo Oscuro y Pulido UX | ✅ Completada |
-| **16** | **Cobertura Global de Pruebas Unitarias e Integración (Backend & Frontend)** | ✅ Completada |
-| **17** | **Contenedorización Multi-Stage (Docker Compose Full Stack)** | ⏳ *Siguiente* |
-| **18** | Despliegue en la Nube y Configuración de Producción | 📋 Planificada |
+| **16** | Cobertura Global de Pruebas Unitarias e Integración (Backend & Frontend) | ✅ Completada |
+| **17** | **Contenedorización Multi-Stage (Docker Compose Full Stack)** | ✅ Completada |
+| **18** | **Despliegue en la Nube y Configuración de Producción** | ⏳ *Siguiente* |
 | **19** | Documentación de Entrega, Manual de Arquitectura y Portfolio | 📋 Planificada |
 
 ---

@@ -1,11 +1,12 @@
 # 🗺️ ROADMAP.md — Hoja de Ruta y Seguimiento de Desarrollo
 
 > **Proyecto:** Paddock Manager  
-> **Última actualización:** 16 de Noviembre de 2026  
-> **Estado global de avance:** 16 de 19 fases completadas y verificadas (84.2% de avance del roadmap global).  
+> **Última actualización:** 24 de Noviembre de 2026  
+> **Estado global de avance:** 17 de 19 fases completadas y verificadas (89.5% de avance del roadmap global).  
 > **Suite de pruebas backend:** **86 de 86 pruebas superadas al 100% (`BUILD SUCCESS`)** (60 tests de integración + 26 tests unitarios Mockito).  
 > **Suite de pruebas frontend:** **34 de 34 pruebas unitarias superadas al 100% en ChromeHeadless** (Karma / Jasmine).  
 > **Compilación frontend:** **Angular 18 Standalone sin errores (`ng build`)**.
+> **Contenedorización Full Stack:** **Docker Compose orquestando PostgreSQL 16, Spring Boot 3 API y Nginx / Angular SPA**.
 
 ---
 
@@ -29,8 +30,8 @@
 | **14** | Dashboards (Métricas y KPIs del Taller) | **COMPLETADA** | ✅ /api/dashboard | ✅ Conectado | ✅ Integration Tests |
 | **15** | Responsive + UX (Modo Oscuro y Móvil) | **COMPLETADA** | N/A | ✅ Dark/Drawer | ✅ Compilación & UX |
 | **16** | Testing (Cobertura Global Backend/Frontend) | **COMPLETADA** | ✅ 86 tests green | ✅ 34 tests Karma | ✅ 120 tests totales |
-| **17** | Docker (Contenedorización Full Stack) | **PARCIAL** | ❌ Sin Dockerfile | ❌ Sin Dockerfile | ⚠️ Solo PostgreSQL |
-| **18** | Deploy (Despliegue y Perfil Producción) | **PENDIENTE** | ❌ Sin prod.yml | ❌ Sin CDN/Nginx | ❌ Pendiente |
+| **17** | Docker (Contenedorización Full Stack) | **COMPLETADA** | ✅ Multi-stage JAR | ✅ Nginx + SPA | ✅ Healthchecks UP |
+| **18** | Deploy (Despliegue y Perfil Producción) | **PENDIENTE** | ❌ Sin prod.yml | ❌ Sin CDN/Cloud | ❌ Pendiente |
 | **19** | Documentación y Portfolio Final | **EN DESARROLLO** | ✅ Swagger/Doc | ✅ UI lista | ⚠️ Documentando |
 
 ---
@@ -274,13 +275,13 @@
 ### FASE 17: Docker (Contenedorización Full Stack)
 - **Objetivo:** Contenedorizar toda la solución mediante Docker Compose para levantar en un solo comando el backend, el frontend y la base de datos.
 - **Funcionalidades necesarias:**
-  - `backend/Dockerfile`: Multi-stage build con Maven y Eclipse Temurin 17 JRE Alpine.
-  - `frontend/Dockerfile`: Multi-stage build con Node.js 20 para compilar Angular y Nginx Alpine para servir la SPA y proxy inverso hacia el backend.
-  - `docker-compose.yml`: Orquestación de servicios `paddock-postgres`, `paddock-api` y `paddock-web`, con variables de entorno, redes internas y healthchecks.
-- **Entregables:** Dockerfiles, configuración Nginx, `docker-compose.prod.yml`.
+  - `backend/Dockerfile`: Multi-stage build con Maven 3.9 y Eclipse Temurin 17 JRE Alpine con usuario sin privilegios root y healthcheck REST.
+  - `frontend/Dockerfile`: Multi-stage build con Node.js 20 para compilar Angular 18 en modo producción y Nginx Alpine para servir la SPA y proxy inverso hacia el backend (`/api/`, `/swagger-ui/`).
+  - `docker-compose.yml`: Orquestación completa de `paddock-postgres`, `paddock-api` y `paddock-web`, con red bridge `paddock-network`, variables de entorno y healthchecks dependientes (`condition: service_healthy`).
+- **Entregables:** `backend/Dockerfile`, `frontend/Dockerfile`, `frontend/nginx.conf`, `backend/.dockerignore`, `frontend/.dockerignore`, `docker-compose.yml`.
 - **Criterios de aceptación:** `docker compose up --build` levanta todo el sistema en local sin necesidad de instalar Java, Node ni PostgreSQL en la máquina anfitriona.
-- **Verificación:** Ejecución limpia en entorno Docker limpio.
-- **Estado actual:** **PARCIAL** (Actualmente `docker-compose.yml` solo orquesta PostgreSQL `paddock-postgres`).
+- **Verificación:** Imágenes compiladas con éxito (`paddockmanager-backend`, `paddockmanager-frontend`), contenedores levantados y respondiendo con éxito en `http://localhost:8080/api/health`, `http://localhost/api/health` y `http://localhost/`.
+- **Estado actual:** **COMPLETADA**.
 
 ---
 
@@ -313,8 +314,7 @@
 
 ## 🚀 3. Próximo Paso Inmediato
 
-El siguiente hito obligatorio en el desarrollo de Paddock Manager es la **FASE 17: Docker (Contenedorización Full Stack)**, que comprende:
-1. Crear `backend/Dockerfile` optimizado multi-stage con OpenJDK 17 Alpine.
-2. Crear `frontend/Dockerfile` multi-stage compilando Angular 18 y sirviendo con Nginx Alpine + configuración de proxy inverso `/api/` hacia el backend.
-3. Actualizar `docker-compose.yml` para orquestar conjuntamente `paddock-postgres`, `paddock-api` y `paddock-web` con healthchecks y redes compartidas.
-4. Verificar el arranque integral con un único comando `docker compose up --build`.
+El siguiente hito obligatorio en el desarrollo de Paddock Manager es la **FASE 18: Deploy (Producción)**, que comprende:
+1. Crear el perfil `application-prod.yml` en Spring Boot con variables de entorno para credenciales seguras y pool Hikari optimizado.
+2. Configurar pipeline automatizado de CI/CD con GitHub Actions (`.github/workflows/ci.yml`) para validación y compilación en cada push.
+3. Documentar las instrucciones de despliegue en servicios cloud (Railway / Render / VPS con Docker Compose).
