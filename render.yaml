@@ -26,12 +26,22 @@ services:
     region: frankfurt
     healthCheckPath: /api/health
     envVars:
+      - key: PORT
+        value: "8080"
       - key: SPRING_PROFILES_ACTIVE
         value: prod
-      - key: DATABASE_URL
+      - key: POSTGRES_HOST
         fromDatabase:
           name: paddock-db
-          property: connectionString
+          property: host
+      - key: POSTGRES_PORT
+        fromDatabase:
+          name: paddock-db
+          property: port
+      - key: POSTGRES_DB
+        fromDatabase:
+          name: paddock-db
+          property: database
       - key: POSTGRES_USER
         fromDatabase:
           name: paddock-db
@@ -40,6 +50,10 @@ services:
         fromDatabase:
           name: paddock-db
           property: password
+      - key: HIKARI_MAX_POOL_SIZE
+        value: "5"
+      - key: HIKARI_MIN_IDLE
+        value: "2"
       - key: JWT_SECRET
         generateValue: true
       - key: SWAGGER_ENABLED
@@ -55,8 +69,7 @@ services:
     region: frankfurt
     healthCheckPath: /
     envVars:
+      - key: PORT
+        value: "80"
       - key: BACKEND_URL
-        fromService:
-          type: web
-          name: paddock-api
-          property: host
+        value: "http://paddock-api:8080"

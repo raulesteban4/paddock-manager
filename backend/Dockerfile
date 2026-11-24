@@ -33,8 +33,4 @@ USER paddock
 
 EXPOSE 8080
 
-# Healthcheck de disponibilidad de la API REST
-HEALTHCHECK --interval=15s --timeout=5s --retries=5 --start-period=30s \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/api/health || exit 1
-
-ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Xmx384m", "-Xms128m", "-XX:+UseContainerSupport", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]

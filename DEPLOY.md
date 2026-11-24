@@ -100,8 +100,8 @@ El repositorio incluye el blueprint [`render.yaml`](file:///render.yaml) preconf
 2. Conecta tu repositorio de GitHub `raulesteban4/paddock-manager`.
 3. Render detectará automáticamente el archivo `render.yaml` y provisionará los 3 servicios en Frankfurt (Europa):
    - **`paddock-db`:** PostgreSQL 16 gestionado en la nube (Plan Free).
-   - **`paddock-api`:** Backend Spring Boot 3 compilado desde Dockerfile con conexión directa a la base de datos y generación segura de `JWT_SECRET`.
-   - **`paddock-web`:** Frontend Angular 18 con Nginx compilado desde Dockerfile con proxy hacia `paddock-api` y certificado SSL HTTPS automático.
+   - **`paddock-api`:** Backend Spring Boot 3 compilado desde Dockerfile con conexión JDBC automática desacoplada (`POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_DB`), pool HikariCP optimizado para RAM de 512MB y generación de `JWT_SECRET`.
+   - **`paddock-web`:** Frontend Angular 18 con Nginx compilado desde Dockerfile con proxy dinámico hacia `paddock-api` y certificado SSL HTTPS automático.
 4. Pulsa en **"Apply"**. En aproximadamente 3-5 minutos tendrás tu aplicación disponible con URLs públicas `https://paddock-web.onrender.com` y `https://paddock-api.onrender.com`.
 
 ### 4.2 Despliegue Manual en Railway:
