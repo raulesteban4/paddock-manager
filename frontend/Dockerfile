@@ -18,7 +18,11 @@ RUN npm run build -- --configuration production
 # ── Stage 2: Servidor Web Nginx Alpine ──
 FROM nginx:alpine
 
-# Reemplazar configuración por defecto con el proxy inverso y soporte SPA
+ENV NGINX_ENVSUBST_FILTER="BACKEND_URL"
+ENV BACKEND_URL="http://paddock-api:8080"
+
+# Plantilla para sustitución de BACKEND_URL y configuración directa por defecto
+COPY nginx.conf /etc/nginx/templates/default.conf.template
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copiar artefactos estáticos compilados

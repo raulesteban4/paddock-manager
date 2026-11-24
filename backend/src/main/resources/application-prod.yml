@@ -18,6 +18,13 @@ spring:
       connection-timeout: 30000
       leak-detection-threshold: 20000
 
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
+      data-locations: classpath:db/seed.sql
+      continue-on-error: true
+
   jpa:
     open-in-view: false
     # En producción no se modifica el esquema DDL dinámicamente; 'none' o 'validate'

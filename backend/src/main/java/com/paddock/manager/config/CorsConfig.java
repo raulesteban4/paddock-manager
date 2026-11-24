@@ -20,13 +20,12 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of(
-            "http://localhost:4200", 
-            "http://127.0.0.1:4200",
-            "http://localhost", 
-            "http://localhost:80",
-            "http://127.0.0.1", 
-            "http://127.0.0.1:80"
+        config.setAllowedOriginPatterns(List.of(
+            "http://localhost*", 
+            "http://127.0.0.1*",
+            "https://*.onrender.com",
+            "https://*.railway.app",
+            "https://*.vercel.app"
         ));
         config.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));

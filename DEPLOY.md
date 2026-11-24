@@ -90,15 +90,27 @@ sudo certbot --nginx -d taller.tudominio.com
 
 ---
 
-## 4. Opción B: Despliegue en Cloud PaaS (Railway / Render)
+## 4. Opción B: Despliegue en Cloud PaaS (Render / Railway)
 
-### Despliegue en Railway:
+### 4.1 Despliegue Automatizado con 1 Clic en Render (Vía `render.yaml`)
+El repositorio incluye el blueprint [`render.yaml`](file:///render.yaml) preconfigurado como infraestructura como código (IaC).
+
+**Pasos para desplegar gratis en Render:**
+1. Ve a [dashboard.render.com/blueprints](https://dashboard.render.com/blueprints) y pulsa en **"New Blueprint Instance"**.
+2. Conecta tu repositorio de GitHub `raulesteban4/paddock-manager`.
+3. Render detectará automáticamente el archivo `render.yaml` y provisionará los 3 servicios en Frankfurt (Europa):
+   - **`paddock-db`:** PostgreSQL 16 gestionado en la nube (Plan Free).
+   - **`paddock-api`:** Backend Spring Boot 3 compilado desde Dockerfile con conexión directa a la base de datos y generación segura de `JWT_SECRET`.
+   - **`paddock-web`:** Frontend Angular 18 con Nginx compilado desde Dockerfile con proxy hacia `paddock-api` y certificado SSL HTTPS automático.
+4. Pulsa en **"Apply"**. En aproximadamente 3-5 minutos tendrás tu aplicación disponible con URLs públicas `https://paddock-web.onrender.com` y `https://paddock-api.onrender.com`.
+
+### 4.2 Despliegue Manual en Railway:
 1. Crea un nuevo proyecto en [Railway.app](https://railway.app).
 2. Añade un servicio **PostgreSQL**: Railway generará automáticamente la variable `DATABASE_URL`.
 3. Añade el repositorio de GitHub:
    - **Servicio Backend:** Root directory `/backend`, Dockerfile path `Dockerfile`. Agrega las variables `SPRING_PROFILES_ACTIVE=prod`, `DATABASE_URL` y `JWT_SECRET`.
    - **Servicio Frontend:** Root directory `/frontend`, Dockerfile path `Dockerfile`.
-4. Asocia tu dominio personalizado al servicio frontend.
+4. Asocia tu dominio personalizado o dominio generado `*.up.railway.app` al servicio frontend.
 
 ---
 
