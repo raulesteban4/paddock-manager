@@ -2,11 +2,12 @@
 
 > **Proyecto:** Paddock Manager  
 > **Última actualización:** 24 de Noviembre de 2026  
-> **Estado global de avance:** 17 de 19 fases completadas y verificadas (89.5% de avance del roadmap global).  
+> **Estado global de avance:** 18 de 19 fases completadas y verificadas (94.7% de avance del roadmap global).  
 > **Suite de pruebas backend:** **86 de 86 pruebas superadas al 100% (`BUILD SUCCESS`)** (60 tests de integración + 26 tests unitarios Mockito).  
 > **Suite de pruebas frontend:** **34 de 34 pruebas unitarias superadas al 100% en ChromeHeadless** (Karma / Jasmine).  
 > **Compilación frontend:** **Angular 18 Standalone sin errores (`ng build`)**.
 > **Contenedorización Full Stack:** **Docker Compose orquestando PostgreSQL 16, Spring Boot 3 API y Nginx / Angular SPA**.
+> **CI/CD & Cloud Deploy:** **GitHub Actions Workflow automatizado (`.github/workflows/ci.yml`) y perfil `application-prod.yml`**.
 
 ---
 
@@ -31,7 +32,7 @@
 | **15** | Responsive + UX (Modo Oscuro y Móvil) | **COMPLETADA** | N/A | ✅ Dark/Drawer | ✅ Compilación & UX |
 | **16** | Testing (Cobertura Global Backend/Frontend) | **COMPLETADA** | ✅ 86 tests green | ✅ 34 tests Karma | ✅ 120 tests totales |
 | **17** | Docker (Contenedorización Full Stack) | **COMPLETADA** | ✅ Multi-stage JAR | ✅ Nginx + SPA | ✅ Healthchecks UP |
-| **18** | Deploy (Despliegue y Perfil Producción) | **PENDIENTE** | ❌ Sin prod.yml | ❌ Sin CDN/Cloud | ❌ Pendiente |
+| **18** | Deploy (Producción y CI/CD) | **COMPLETADA** | ✅ application-prod | ✅ Nginx + SSL ready | ✅ CI/CD Pipeline |
 | **19** | Documentación y Portfolio Final | **EN DESARROLLO** | ✅ Swagger/Doc | ✅ UI lista | ⚠️ Documentando |
 
 ---
@@ -285,16 +286,17 @@
 
 ---
 
-### FASE 18: Deploy (Producción)
-- **Objetivo:** Preparar la aplicación para su despliegue continuo en entornos de nube (VPS, Railway, Render, AWS o GCP).
+### FASE 18: Deploy (Producción y CI/CD)
+- **Objetivo:** Preparar la aplicación para su despliegue continuo en entornos de nube (VPS, Railway, Render, AWS o GCP) y automatizar la validación del código con GitHub Actions.
 - **Funcionalidades necesarias:**
-  - Perfil `application-prod.yml` con configuración segura (sin credenciales por defecto, pool HikariCP dimensionado, logs formateados).
-  - Configuración de certificados SSL/TLS y cabeceras de seguridad HTTP (HSTS, CSP).
-  - Pipeline de CI/CD mediante GitHub Actions (build, test, push de imágenes Docker a registro).
-- **Entregables:** Workflow `.github/workflows/ci.yml`, perfil `application-prod.yml`.
-- **Criterios de aceptación:** Despliegue automático ante push a `main` y acceso HTTPS seguro.
-- **Verificación:** Despliegue de prueba en servidor en la nube.
-- **Estado actual:** **PENDIENTE**.
+  - Perfil `application-prod.yml` con configuración segura (soporte de `DATABASE_URL` y variables individuales, pool HikariCP dimensionado a 20 conexiones, logs limpios y formateados, Hibernate en `ddl-auto: none`).
+  - Configuración de cabeceras de seguridad HTTP en `SecurityConfig.java` (`frameOptions`, `contentSecurityPolicy`).
+  - Pipeline de CI/CD mediante GitHub Actions ([`.github/workflows/ci.yml`](file:///.github/workflows/ci.yml)) ejecutando tests de backend (86 tests), tests de frontend (34 tests Karma) y verificación de Docker multi-stage build.
+  - Orquestación de producción con [`docker-compose.prod.yml`](file:///docker-compose.prod.yml) y manual de despliegue en [`DEPLOY.md`](file:///DEPLOY.md).
+- **Entregables:** `application-prod.yml`, `.github/workflows/ci.yml`, `docker-compose.prod.yml`, `DEPLOY.md`, plantilla de variables en `.env.example`.
+- **Criterios de aceptación:** Pipeline de GitHub Actions sintácticamente válido, build con perfil prod probado, tests automatizados verdes y documentación completa de despliegue cloud.
+- **Verificación:** Ejecución de `docker compose -f docker-compose.prod.yml config` exitosa y suite completa de 86 tests backend pasando al 100%.
+- **Estado actual:** **COMPLETADA**.
 
 ---
 
@@ -308,13 +310,14 @@
 - **Entregables:** Documentación en raíz del repositorio y manuales complementarios.
 - **Criterios de aceptación:** Cualquier desarrollador o reclutador puede clonar, entender, ejecutar y evaluar el proyecto en menos de 10 minutos.
 - **Verificación:** Revisión integral de documentación y enlaces.
-- **Estado actual:** **EN DESARROLLO / PARCIAL** (`README.md`, `AGENTS.md`, `ROADMAP.md` y `ARCHITECTURE.md` creados y sincronizados).
+- **Estado actual:** **EN DESARROLLO / PARCIAL** (`README.md`, `AGENTS.md`, `ROADMAP.md`, `ARCHITECTURE.md` y `DEPLOY.md` sincronizados; pendiente cierre y portfolio final).
 
 ---
 
 ## 🚀 3. Próximo Paso Inmediato
 
-El siguiente hito obligatorio en el desarrollo de Paddock Manager es la **FASE 18: Deploy (Producción)**, que comprende:
-1. Crear el perfil `application-prod.yml` en Spring Boot con variables de entorno para credenciales seguras y pool Hikari optimizado.
-2. Configurar pipeline automatizado de CI/CD con GitHub Actions (`.github/workflows/ci.yml`) para validación y compilación en cada push.
-3. Documentar las instrucciones de despliegue en servicios cloud (Railway / Render / VPS con Docker Compose).
+El último hito obligatorio en el desarrollo de Paddock Manager es la **FASE 19: Documentación y Portfolio Final**, que comprende:
+1. Completar la guía exhaustiva y presentación profesional de portfolio en `README.md` con flujos operativos y credenciales demo.
+2. Añadir la licencia de código abierto (MIT License) en `LICENSE`.
+3. Sincronizar todos los enlaces relativos y diagramas Mermaid en `ARCHITECTURE.md`, `ROADMAP.md` y `AGENTS.md`.
+4. Cerrar el ciclo de desarrollo Full Stack y consolidar el repositorio para su presentación en portfolio.

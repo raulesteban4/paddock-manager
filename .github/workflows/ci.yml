@@ -1,0 +1,118 @@
+name: Paddock Manager CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # ── 1. Pipeline de Integración Continua Backend (Spring Boot 3) ──
+  backend-ci:
+    name: Backend CI (Java 17 & Spring Boot 3)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del código fuente
+        uses: actions/checkout@v4
+
+      - name: Configurar OpenJDK 17 (Eclipse Temurin)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Asignar permisos de ejecución al Maven Wrapper
+        run: chmod +x backend/mvnw
+
+      - name: Ejecutar suite de pruebas (86 tests unitarios y de integración)
+        run: |
+          cd backend
+          ./mvnw clean test -B
+
+      - name: Compilar y empaquetar artefacto JAR ejecutable
+        run: |
+          cd backend
+          ./mvnw package -DskipTests -B
+
+      - name: Archivar artefacto JAR generado
+        uses: actions/upload-artifact@v4
+        with:
+          name: paddock-manager-api-jar
+          path: backend/target/paddock-manager-api-*.jar
+          retention-days: 7
+
+  # ── 2. Pipeline de Integración Continua Frontend (Angular 18 Standalone) ──
+  frontend-ci:
+    name: Frontend CI (Node.js 20 & Angular 18)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del código fuente
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: Instalar dependencias con npm ci
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Ejecutar pruebas unitarias en Karma (ChromeHeadless)
+        run: |
+          cd frontend
+          npx ng test --watch=false --browsers=ChromeHeadless
+
+      - name: Compilar distribución de producción con Angular CLI
+        run: |
+          cd frontend
+          npm run build -- --configuration production
+
+      - name: Archivar bundle estático generado
+        uses: actions/upload-artifact@v4
+        with:
+          name: paddock-manager-web-dist
+          path: frontend/dist/frontend/browser
+          retention-days: 7
+
+  # ── 3. Verificación de Contenedorización Docker Multi-Stage ──
+  docker-build:
+    name: Docker Multi-Stage Build Verification
+    needs: [ backend-ci, frontend-ci ]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del código fuente
+        uses: actions/checkout@v4
+
+      - name: Configurar Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Validar sintaxis y servicios de docker-compose.yml
+        run: docker compose config
+
+      - name: Compilar imagen Docker del Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: false
+          tags: paddock-manager-api:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Compilar imagen Docker del Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: false
+          tags: paddock-manager-web:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

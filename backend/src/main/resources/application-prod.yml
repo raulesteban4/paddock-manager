@@ -1,0 +1,66 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    # Soporta DATABASE_URL (estándar en Railway, Render, Fly.io) o variables individuales POSTGRES_*
+    url: ${DATABASE_URL:jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:paddock_db}}
+    username: ${POSTGRES_USER:paddock_user}
+    password: ${POSTGRES_PASSWORD:paddock_secure_pass_2026}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: PaddockHikariCP-Prod
+      maximum-pool-size: ${HIKARI_MAX_POOL_SIZE:20}
+      minimum-idle: ${HIKARI_MIN_IDLE:5}
+      idle-timeout: 300000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      leak-detection-threshold: 20000
+
+  jpa:
+    open-in-view: false
+    # En producción no se modifica el esquema DDL dinámicamente; 'none' o 'validate'
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          batch_size: 25
+        order_inserts: true
+        order_updates: true
+
+server:
+  port: ${PORT:8080}
+  error:
+    include-stacktrace: never
+    include-message: always
+    include-binding-errors: never
+
+# Registro limpio para agregadores de logs de producción (Datadog, CloudWatch, Papertrail)
+logging:
+  level:
+    root: INFO
+    com.paddock.manager: INFO
+    org.springframework.web: WARN
+    org.hibernate: WARN
+    org.hibernate.SQL: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+# Configuración JWT con lectura de variable de entorno segura
+jwt:
+  secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+  expiration: ${JWT_EXPIRATION_MS:86400000}
+
+# Swagger UI configurable en producción
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: ${SWAGGER_ENABLED:true}
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: ${SWAGGER_ENABLED:true}

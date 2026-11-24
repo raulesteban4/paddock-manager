@@ -374,9 +374,9 @@ npx ng test --watch=false --browsers=ChromeHeadless
 | **14** | Dashboard de Taller, Métricas y KPIs de Facturación | ✅ Completada |
 | **15** | Optimización Responsive, Modo Oscuro y Pulido UX | ✅ Completada |
 | **16** | Cobertura Global de Pruebas Unitarias e Integración (Backend & Frontend) | ✅ Completada |
-| **17** | **Contenedorización Multi-Stage (Docker Compose Full Stack)** | ✅ Completada |
-| **18** | **Despliegue en la Nube y Configuración de Producción** | ⏳ *Siguiente* |
-| **19** | Documentación de Entrega, Manual de Arquitectura y Portfolio | 📋 Planificada |
+| **17** | Contenedorización Multi-Stage (Docker Compose Full Stack) | ✅ Completada |
+| **18** | **Despliegue en Producción y CI/CD con GitHub Actions** | ✅ Completada |
+| **19** | **Documentación de Entrega, Manual de Arquitectura y Portfolio** | ⏳ *Siguiente* |
 
 ---
 
