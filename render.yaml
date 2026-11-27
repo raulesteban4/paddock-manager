@@ -28,12 +28,21 @@ services:
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
-      # Render proporciona la URL completa: postgresql://user:pass@host:port/db
-      # Spring Boot la convierte a JDBC anteponiendo "jdbc:" en application-prod.yml
-      - key: DATABASE_URL
+      # Variables individuales de PostgreSQL — se usan directamente en la URL JDBC.
+      # Render también auto-inyecta DATABASE_URL, pero la app NO la usa para
+      # evitar el problema del prefijo jdbc: faltante.
+      - key: POSTGRES_HOST
         fromDatabase:
           name: paddock-db
-          property: connectionString
+          property: host
+      - key: POSTGRES_PORT
+        fromDatabase:
+          name: paddock-db
+          property: port
+      - key: POSTGRES_DB
+        fromDatabase:
+          name: paddock-db
+          property: database
       - key: POSTGRES_USER
         fromDatabase:
           name: paddock-db

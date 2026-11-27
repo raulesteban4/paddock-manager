@@ -4,11 +4,12 @@ spring:
       on-profile: prod
 
   datasource:
-    # Render proporciona DATABASE_URL como: postgresql://user:pass@host:port/db
-    # El driver JDBC de PostgreSQL requiere el prefijo "jdbc:", por eso se antepone.
-    # La URL ya incluye usuario y contraseña, HikariCP los extrae automáticamente.
-    # Si DATABASE_URL no estuviera disponible, se usa la URL local de desarrollo.
-    url: "jdbc:${DATABASE_URL:postgresql://paddock_user:paddock_secure_pass_2026@localhost:5432/paddock_db}"
+    # URL construida exclusivamente con variables individuales de Render.
+    # NO se usa DATABASE_URL para evitar que Render la inyecte automáticamente
+    # como "postgresql://..." (sin prefijo jdbc:), lo que el driver JDBC rechaza.
+    # Render inyecta POSTGRES_HOST, POSTGRES_PORT, POSTGRES_DB, POSTGRES_USER y
+    # POSTGRES_PASSWORD de forma limpia desde fromDatabase en render.yaml.
+    url: "jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:paddock_db}"
     username: ${POSTGRES_USER:paddock_user}
     password: ${POSTGRES_PASSWORD:paddock_secure_pass_2026}
     driver-class-name: org.postgresql.Driver
@@ -20,10 +21,6 @@ spring:
       max-lifetime: 1800000
       connection-timeout: 30000
       leak-detection-threshold: 20000
-      # SSL requerido por Render PostgreSQL en conexiones externas / internas cifradas
-      data-source-properties:
-        sslmode: require
-        sslfactory: org.postgresql.ssl.NonValidatingFactory
 
   sql:
     init:
@@ -53,7 +50,6 @@ server:
     include-message: always
     include-binding-errors: never
 
-# Registro limpio para agregadores de logs de producción
 logging:
   level:
     root: INFO
@@ -64,12 +60,10 @@ logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
 
-# Configuración JWT con lectura de variable de entorno segura
 jwt:
   secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
   expiration: ${JWT_EXPIRATION_MS:86400000}
 
-# Swagger UI configurable en producción
 springdoc:
   api-docs:
     path: /v3/api-docs
