@@ -2,7 +2,7 @@
 # Render.com Blueprint — Paddock Manager Infrastructure-as-Code
 # ==============================================================================
 # Despliegue automatizado con un solo clic:
-#  1. Base de datos PostgreSQL 16 gestionada en la nube (Plan Free)
+#  1. Base de datos PostgreSQL gestionada en la nube (Plan Free)
 #  2. Backend REST API Spring Boot 3 (Multi-stage Docker)
 #  3. Frontend Web Angular 18 con Nginx (Multi-stage Docker, PORT dinámico)
 # ==============================================================================
@@ -28,18 +28,12 @@ services:
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
-      - key: POSTGRES_HOST
+      # Render proporciona la URL completa: postgresql://user:pass@host:port/db
+      # Spring Boot la convierte a JDBC anteponiendo "jdbc:" en application-prod.yml
+      - key: DATABASE_URL
         fromDatabase:
           name: paddock-db
-          property: host
-      - key: POSTGRES_PORT
-        fromDatabase:
-          name: paddock-db
-          property: port
-      - key: POSTGRES_DB
-        fromDatabase:
-          name: paddock-db
-          property: database
+          property: connectionString
       - key: POSTGRES_USER
         fromDatabase:
           name: paddock-db

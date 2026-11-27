@@ -4,8 +4,11 @@ spring:
       on-profile: prod
 
   datasource:
-    # Soporta variables individuales POSTGRES_* o DATABASE_URL
-    url: ${DATABASE_URL:jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:paddock_db}}
+    # Render proporciona DATABASE_URL como: postgresql://user:pass@host:port/db
+    # El driver JDBC de PostgreSQL requiere el prefijo "jdbc:", por eso se antepone.
+    # La URL ya incluye usuario y contraseña, HikariCP los extrae automáticamente.
+    # Si DATABASE_URL no estuviera disponible, se usa la URL local de desarrollo.
+    url: "jdbc:${DATABASE_URL:postgresql://paddock_user:paddock_secure_pass_2026@localhost:5432/paddock_db}"
     username: ${POSTGRES_USER:paddock_user}
     password: ${POSTGRES_PASSWORD:paddock_secure_pass_2026}
     driver-class-name: org.postgresql.Driver
@@ -17,6 +20,10 @@ spring:
       max-lifetime: 1800000
       connection-timeout: 30000
       leak-detection-threshold: 20000
+      # SSL requerido por Render PostgreSQL en conexiones externas / internas cifradas
+      data-source-properties:
+        sslmode: require
+        sslfactory: org.postgresql.ssl.NonValidatingFactory
 
   sql:
     init:
@@ -27,7 +34,6 @@ spring:
 
   jpa:
     open-in-view: false
-    # En producción no se modifica el esquema DDL dinámicamente; 'none' o 'validate'
     hibernate:
       ddl-auto: none
     show-sql: false
@@ -47,7 +53,7 @@ server:
     include-message: always
     include-binding-errors: never
 
-# Registro limpio para agregadores de logs de producción (Datadog, CloudWatch, Papertrail)
+# Registro limpio para agregadores de logs de producción
 logging:
   level:
     root: INFO
