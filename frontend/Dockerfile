@@ -23,7 +23,7 @@ FROM nginx:alpine
 # Las variables sustituidas son únicamente las declaradas en NGINX_ENVSUBST_TEMPLATE_VARS
 ENV NGINX_ENVSUBST_TEMPLATE_VARS="PORT BACKEND_URL"
 ENV PORT=10000
-ENV BACKEND_URL="https://paddock-api.onrender.com"
+ENV BACKEND_URL="https://paddock-api-n1mp.onrender.com"
 
 # Colocar la plantilla en el directorio que nginx:alpine procesa automáticamente
 COPY nginx.conf /etc/nginx/templates/default.conf.template

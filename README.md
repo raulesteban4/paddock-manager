@@ -383,9 +383,9 @@ npx ng test --watch=false --browsers=ChromeHeadless
 ## 🌐 Despliegue en la Nube (Render)
 
 El proyecto está configurado mediante Infraestructura como Código ([`render.yaml`](render.yaml)) para desplegarse en un clic en Render:
-- **Frontend Web (Angular 18 + Nginx):** `https://paddock-web.onrender.com`
-- **Backend REST API (Spring Boot 3):** `https://paddock-api.onrender.com`
-- **Documentación Swagger:** `https://paddock-api.onrender.com/swagger-ui.html`
+- **Frontend Web (Angular 18 + Nginx):** `https://paddock-web-rot8.onrender.com`
+- **Backend REST API (Spring Boot 3):** `https://paddock-api-n1mp.onrender.com`
+- **Documentación Swagger:** `https://paddock-api-n1mp.onrender.com/swagger-ui.html`
 - **Base de datos:** PostgreSQL gestionado en la nube (`paddock-db`)
 
 Consulta la guía completa de despliegue en [`DEPLOY.md`](DEPLOY.md) y la arquitectura técnica en [`ARCHITECTURE.md`](ARCHITECTURE.md).

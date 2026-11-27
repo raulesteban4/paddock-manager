@@ -71,4 +71,4 @@ services:
     healthCheckPath: /
     envVars:
       - key: BACKEND_URL
-        value: "https://paddock-api.onrender.com"
+        value: "https://paddock-api-n1mp.onrender.com"
