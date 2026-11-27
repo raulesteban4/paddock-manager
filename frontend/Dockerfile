@@ -15,19 +15,22 @@ RUN npm ci
 COPY . .
 RUN npm run build -- --configuration production
 
-# ── Stage 2: Servidor Web Nginx Alpine ──
+# ── Stage 2: Servidor Web Nginx Alpine con soporte de plantillas ──
 FROM nginx:alpine
 
-ENV NGINX_ENVSUBST_FILTER="BACKEND_URL"
-ENV BACKEND_URL="http://paddock-api:8080"
+# Render inyecta PORT dinámicamente; nginx:alpine ejecuta automáticamente
+# envsubst sobre /etc/nginx/templates/*.template al arrancar el contenedor
+# Las variables sustituidas son únicamente las declaradas en NGINX_ENVSUBST_TEMPLATE_VARS
+ENV NGINX_ENVSUBST_TEMPLATE_VARS="PORT BACKEND_URL"
+ENV PORT=10000
+ENV BACKEND_URL="https://paddock-api.onrender.com"
 
-# Plantilla para sustitución de BACKEND_URL y configuración directa por defecto
+# Colocar la plantilla en el directorio que nginx:alpine procesa automáticamente
 COPY nginx.conf /etc/nginx/templates/default.conf.template
-COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copiar artefactos estáticos compilados
 COPY --from=builder /app/dist/frontend/browser /usr/share/nginx/html
 
-EXPOSE 80
+EXPOSE 10000
 
 CMD ["nginx", "-g", "daemon off;"]

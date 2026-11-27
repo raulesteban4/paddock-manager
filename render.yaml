@@ -4,7 +4,7 @@
 # Despliegue automatizado con un solo clic:
 #  1. Base de datos PostgreSQL 16 gestionada en la nube (Plan Free)
 #  2. Backend REST API Spring Boot 3 (Multi-stage Docker)
-#  3. Frontend Web Angular 18 con Nginx (Multi-stage Docker)
+#  3. Frontend Web Angular 18 con Nginx (Multi-stage Docker, PORT dinámico)
 # ==============================================================================
 
 databases:
@@ -13,7 +13,7 @@ databases:
     user: paddock_user
     plan: free
     region: frankfurt
-    ipAllowList: [] # Permite conexiones internas directas desde servicios en Render
+    ipAllowList: [] # Permite conexiones internas desde servicios en Render
 
 services:
   # ── 1. Backend REST API (Spring Boot 3) ──
@@ -26,8 +26,6 @@ services:
     region: frankfurt
     healthCheckPath: /api/health
     envVars:
-      - key: PORT
-        value: "8080"
       - key: SPRING_PROFILES_ACTIVE
         value: prod
       - key: POSTGRES_HOST
@@ -69,7 +67,5 @@ services:
     region: frankfurt
     healthCheckPath: /
     envVars:
-      - key: PORT
-        value: "80"
       - key: BACKEND_URL
-        value: "http://paddock-api:8080"
+        value: "https://paddock-api.onrender.com"
