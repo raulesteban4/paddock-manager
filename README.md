@@ -376,7 +376,19 @@ npx ng test --watch=false --browsers=ChromeHeadless
 | **16** | Cobertura Global de Pruebas Unitarias e Integración (Backend & Frontend) | ✅ Completada |
 | **17** | Contenedorización Multi-Stage (Docker Compose Full Stack) | ✅ Completada |
 | **18** | **Despliegue en Producción y CI/CD con GitHub Actions** | ✅ Completada |
-| **19** | **Documentación de Entrega, Manual de Arquitectura y Portfolio** | ⏳ *Siguiente* |
+| **19** | **Documentación de Entrega, Manual de Arquitectura y Portfolio** | ✅ Completada |
+
+---
+
+## 🌐 Despliegue en la Nube (Render)
+
+El proyecto está configurado mediante Infraestructura como Código ([`render.yaml`](render.yaml)) para desplegarse en un clic en Render:
+- **Frontend Web (Angular 18 + Nginx):** `https://paddock-web.onrender.com`
+- **Backend REST API (Spring Boot 3):** `https://paddock-api.onrender.com`
+- **Documentación Swagger:** `https://paddock-api.onrender.com/swagger-ui.html`
+- **Base de datos:** PostgreSQL gestionado en la nube (`paddock-db`)
+
+Consulta la guía completa de despliegue en [`DEPLOY.md`](DEPLOY.md) y la arquitectura técnica en [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ---
 
